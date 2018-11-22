@@ -285,17 +285,58 @@ module integration_simulator();
         #(`CLOCK); 
         input_index = 3;   
         #(`CLOCK);
+        input_index = 0;
+        input_value = 2;
+        #(`CLOCK); 
+        input_index = 1;
+        #(`CLOCK); 
+        input_index = 2;   
+        #(`CLOCK); 
+        input_index = 3;   
+        #(`CLOCK);
         input_enable = 0;
         #(`CLOCK); 
     end
     
+    reg [3:0] output_values_checked;
+    
+    initial begin
+        output_values_checked = 0;
+    end
+    
     always @ (posedge clk) begin
         if (input_enable_3) begin
-            case (input_index_3)
-                0: check_output(input_value_3, 97);
-                1: check_output(input_value_3, 124);
-                2: check_output(input_value_3, 41);
-                3: check_output(input_value_3, 164);
+            case (output_values_checked)
+                0: begin
+                    case (input_index_3)
+                        0: check_output(input_value_3, 97);
+                        1: check_output(input_value_3, 124);
+                        2: check_output(input_value_3, 41);
+                        3: begin
+                            output_values_checked <= output_values_checked+1;
+                            check_output(input_value_3, 164);
+                        end
+                        default: begin
+                            $display("Unknown index");
+                            ->error;
+                        end
+                    endcase 
+                end
+                1: begin
+                    case (input_index_3)
+                        0: check_output(input_value_3, 194);
+                        1: check_output(input_value_3, 248);
+                        2: check_output(input_value_3, 82);
+                        3: begin 
+                            output_values_checked <= output_values_checked+1;
+                            check_output(input_value_3, 328);
+                        end
+                        default: begin
+                            $display("Unknown index");
+                            ->error;
+                        end
+                    endcase
+                end
                 default: begin
                     $display("Unknown index");
                     ->error;
@@ -304,12 +345,21 @@ module integration_simulator();
         end    
     end
     
+    reg [3:0] output_results_checked;
+        
+    initial begin
+        output_results_checked = 0;
+    end
+    
     always @ (posedge clk) begin
         if (output_result[`DATA_WIDTH]) begin 
             check_output(output_result[`DATA_WIDTH-1:0], 3);
-            #(`CLOCK*2);
-            $display("SUCCESSFUL TEST!"); 
-            $stop;
+            output_results_checked <= output_results_checked+1;
+            if (output_results_checked == 1) begin
+                #(`CLOCK*2);
+                $display("SUCCESSFUL TEST!"); 
+                $stop;
+            end
         end
     end
     
