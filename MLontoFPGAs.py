@@ -2,6 +2,8 @@
 import tensorflow as tf
 from tensorflow import keras
 
+from WeightCellPrint import WeightCellPrinter
+
 # For numpy array manipulation
 import numpy as np
 
@@ -51,34 +53,31 @@ def printLayers(childNode):
             print(childNode.value.__class__.__name__, "->", parent.value.__class__.__name__)
             printLayers(parent)
 
-def processLayers(childNode, outputFile, inputWires):
+def processLayers(childNode, outputFile, inputWires, layerIndex):
     for parent in childNode.parents:
         if parent.value != None:
-            outputWires = createVerilog(parent.value, outputFile, inputWires)
-            processLayers(parent, outputFile, outputWires)
+            outputWires = createVerilog(layerIndex, parent.value, outputFile, inputWires)
+            processLayers(parent, outputFile, outputWires, layerIndex + 1)
 
-def denseHandler(layer, outputFile, inputWires):
+def denseHandler(layerIndex, layer, outputFile, inputWires):
     layerConfig = layer.get_config()
-    # These following processing elements will also need to get connected with wires.
-    for weightSetIndex in range (layerConfig["units"]):
-        outputFile.write("// Processing element for " + layer.__class__.__name__
-                         + " layer with weights layer.get_weights()[0][" + str(weightSetIndex) + "]\n")
+    weightCellPrinter = WeightCellPrinter()
+    outputWires = weightCellPrinter.printCells(layer.get_weights()[0], layerIndex, layerConfig["units"],
+                                               inputWires, outputFile)
     if (layerConfig["use_bias"]):
         outputFile.write("// Processing element for bias addition with biases layer.get_weights()[1]\n")
     outputFile.write("// Processing element for activation function " + layerConfig["activation"] + "\n")
     outputFile.write("\n")
-    # Return the output wire names of the elements dedicated for this layer
-    return [] 
+    return outputWires 
 
-def defaultHandler(layer, outputFile, inputWires):
+def defaultHandler(layerIndex, layer, outputFile, inputWires):
     outputFile.write("// Some processing elements for " + layer.__class__.__name__ + " layer\n")
     outputFile.write("\n")
-    return []
+    return inputWires
 
-def createVerilog(layer, outputFile, inputWires):
-    layerHandlers = {keras.layers.Dense(1).__class__.__name__ : denseHandler,
-    }
-    return layerHandlers.get(layer.__class__.__name__, defaultHandler)(layer, outputFile, inputWires)
+def createVerilog(layerIndex, layer, outputFile, inputWires):
+    layerHandlers = {keras.layers.Dense(1).__class__.__name__ : denseHandler}
+    return layerHandlers.get(layer.__class__.__name__, defaultHandler)(layerIndex, layer, outputFile, inputWires)
 
 loaded_model = keras.models.load_model("keras_model.h5")
 
@@ -127,6 +126,14 @@ outputVerilogFile.write("\n")
 outputVerilogFile.write("// Some magical FSM code\n")
 outputVerilogFile.write("\n")
 
-inputWires = createVerilog(inputLayers[0].value, outputVerilogFile, [])
-processLayers(inputLayers[0], outputVerilogFile, inputWires)
+inputWires = ["input_index", "input_value", "input_result", "input_enable"]
+
+outputVerilogFile.write("reg clk;\n".format(inputWires[0]))
+outputVerilogFile.write("reg [`DATA_WIDTH-1:0] {};\n".format(inputWires[0]))
+outputVerilogFile.write("reg [`DATA_WIDTH-1:0] {};\n".format(inputWires[1]))
+outputVerilogFile.write("reg [`DATA_WIDTH:0] {};\n".format(inputWires[2]))
+outputVerilogFile.write("reg {};\n".format(inputWires[3]))
+
+inputWires = createVerilog(0, inputLayers[0].value, outputVerilogFile, inputWires)
+processLayers(inputLayers[0], outputVerilogFile, inputWires, 1)
 outputVerilogFile.close()
