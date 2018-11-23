@@ -249,7 +249,7 @@ module integration_simulator();
         .output_enable(input_enable_3)
     ); 
     
-    argmax_cell #(
+    softmax_cell #(
         .DATA_WIDTH(`DATA_WIDTH),
         .WEIGHT_AMOUNT(`WEIGHT_AMOUNT_2)
     ) result_cell (

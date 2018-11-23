@@ -21,7 +21,7 @@
 // Additional Comments:
 // 
 //////////////////////////////////////////////////////////////////////////////////
-module argmax_simulator();
+module softmax_simulator();
 
     event error;
     always @ (error) begin
@@ -44,7 +44,7 @@ module argmax_simulator();
     reg input_enable;
     wire [`DATA_WIDTH:0] output_result;
 
-    argmax_cell #(
+    softmax_cell #(
         .DATA_WIDTH(`DATA_WIDTH),
         .WEIGHT_AMOUNT(2)
     ) uut (
