@@ -86,7 +86,7 @@ initial begin
     input_value = {32'd0, 32'd1, 32'd1, 32'd1};
     #(`CLOCK); 
     check_output(output_result, {1'b0, 32'd0});
-    input_index = 4;
+    input_index = 1;
     input_value = {32'd1, 32'd2, 32'd3, 32'd4};
     #(`CLOCK); 
     check_output(output_result, {1'b1, 32'd13});
@@ -95,7 +95,7 @@ initial begin
     input_result = {1'b1, 32'd6};
     #(`CLOCK); 
     check_output(output_result, {1'b1, 32'd6});
-    input_index = 4;   
+    input_index = 1;   
     input_value = {32'd1, 32'd2, 32'd3, 32'd4}; 
     input_result = {1'b1, 32'd55};
     #(`CLOCK); 
