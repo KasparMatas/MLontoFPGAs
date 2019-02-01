@@ -43,7 +43,7 @@ initial begin
     result = 0; 
 end
     
-always @ (posedge clk) begin
+always @ (posedge clk) begin #1
     if (input_enable) begin
         if (input_index == 0) accumulator <= 0 + input_value * WEIGHTS[32*input_index +: 8];
         else if (input_index == WEIGHT_AMOUNT-1 && input_result[DATA_WIDTH]) 

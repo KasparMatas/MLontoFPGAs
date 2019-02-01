@@ -22,7 +22,7 @@
 
 module relu_cell#(
         parameter DATA_WIDTH = 32,
-        parameter WEIGHT_AMOUNT = 4
+        parameter CELL_AMOUNT = 4
     ) (
         input wire clk,
         input wire [DATA_WIDTH:0] input_result,
@@ -37,11 +37,11 @@ initial begin
     index = 0;
 end
     
-always @ (posedge clk) begin
+always @ (posedge clk) begin #1
     if (input_result[DATA_WIDTH]) begin
         if (input_result[DATA_WIDTH-1]) output_value <= 0;
         else output_value <= input_result[DATA_WIDTH-1:0];
-        if (index == WEIGHT_AMOUNT) begin
+        if (index == CELL_AMOUNT) begin
             output_index <= 0;
             index <= 1;
         end

@@ -55,7 +55,7 @@ module relu_cell_simulator();
 
     relu_cell #(
         .DATA_WIDTH(`DATA_WIDTH), 
-        .WEIGHT_AMOUNT(2)
+        .CELL_AMOUNT(2)
     ) uut (
         .clk(clk), 
         .input_result(input_result),
@@ -74,6 +74,7 @@ module relu_cell_simulator();
     end
 
     initial begin
+        #2;
         #(`CLOCK*2); 
         input_result = 1;
         #`CLOCK; 
@@ -106,7 +107,7 @@ module relu_cell_simulator();
         check_enable(output_enable, 1);
         input_result[`DATA_WIDTH-1:0] = 15;
         input_result[`DATA_WIDTH] = 0;
-        #1;
+        #`CLOCK;
         check_output(output_value, 0);
         check_output(output_index, 0);
         check_enable(output_enable, 0); 

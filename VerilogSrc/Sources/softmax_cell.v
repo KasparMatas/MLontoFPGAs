@@ -22,7 +22,7 @@
 
 module softmax_cell#(
         parameter DATA_WIDTH = 32,
-        parameter WEIGHT_AMOUNT = 4
+        parameter CELL_AMOUNT = 4
     ) (
         input wire clk,
         input wire [DATA_WIDTH-1:0] input_index,
@@ -39,9 +39,9 @@ initial begin
     best_index = 0;
 end
 
-always @ (posedge clk) begin
+always @ (posedge clk) begin #1
     if (input_enable)
-        if (input_index == WEIGHT_AMOUNT - 1) begin
+        if (input_index == CELL_AMOUNT - 1) begin
             output_result[DATA_WIDTH] = 1'b1;
             if (best_value <= input_value) output_result[DATA_WIDTH-1:0] <= input_index;
             else output_result[DATA_WIDTH-1:0] <= best_index;
