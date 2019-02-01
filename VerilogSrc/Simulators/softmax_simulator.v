@@ -46,7 +46,7 @@ module softmax_simulator();
 
     softmax_cell #(
         .DATA_WIDTH(`DATA_WIDTH),
-        .WEIGHT_AMOUNT(2)
+        .CELL_AMOUNT(2)
     ) uut (
         .clk(clk), 
         .input_index(input_index),
@@ -67,6 +67,7 @@ module softmax_simulator();
     end
 
     initial begin
+        #2;
         #(`CLOCK*2); 
         input_value = 1;
         #`CLOCK;

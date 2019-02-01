@@ -77,6 +77,7 @@ initial begin
 end
 
 initial begin
+    #2;
     #(`CLOCK*2); 
     input_enable = 1;
     #(`CLOCK); 
