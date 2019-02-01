@@ -20,7 +20,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module softmax_cell#(
+module argmax_cell#(
         parameter DATA_WIDTH = 32,
         parameter CELL_AMOUNT = 4
     ) (

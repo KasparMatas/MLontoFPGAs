@@ -311,7 +311,7 @@ module integration_simulator();
         .output_enable(input_enable_4)
     );
 
-    softmax_cell #(
+    argmax_cell #(
         .DATA_WIDTH(`DATA_WIDTH),
         .CELL_AMOUNT(2)
     ) result_cell (
