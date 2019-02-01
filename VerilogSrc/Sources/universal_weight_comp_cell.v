@@ -48,7 +48,7 @@ generate
         ) uut (
             .add_value(joint_accumulator[DATA_WIDTH*i +: DATA_WIDTH]),
             .input_value(input_value[DATA_WIDTH*i +: DATA_WIDTH]),
-            .weight_value(WEIGHTS[8*(input_index+i) +: 8]),
+            .weight_value(WEIGHTS[8*(input_index*INPUT_AMOUNT+i) +: 8]),
             .output_value(joint_accumulator[DATA_WIDTH*(i+1) +: DATA_WIDTH])
         );
     end
@@ -63,7 +63,7 @@ assign joint_accumulator[0 +: DATA_WIDTH] = accumulator;
 
 always @ (posedge clk) begin #1
     if (input_enable) begin
-        if (input_index == WEIGHT_AMOUNT-INPUT_AMOUNT && input_result[DATA_WIDTH]) begin
+        if (input_index*INPUT_AMOUNT == WEIGHT_AMOUNT-INPUT_AMOUNT && input_result[DATA_WIDTH]) begin
             result <= {1'b1, joint_accumulator[DATA_WIDTH*INPUT_AMOUNT +: DATA_WIDTH]};
             accumulator <= 0; 
         end
@@ -84,55 +84,12 @@ always @ (posedge clk) begin #1
             output_result <= result;
             result[DATA_WIDTH] <= 1'b0;
         end
-        else if (input_enable && input_index == WEIGHT_AMOUNT-INPUT_AMOUNT) begin
+        else if (input_enable && input_index*INPUT_AMOUNT == WEIGHT_AMOUNT-INPUT_AMOUNT) begin
             output_result <= {1'b1, joint_accumulator[DATA_WIDTH*INPUT_AMOUNT +: DATA_WIDTH]};
             accumulator <= 0;
         end
         else output_result <= 0; 
     end
 end
-
-//function [DATA_WIDTH-1:0] increase_value(input reg [DATA_WIDTH-1:0] initial_value);
-//begin
-//    increase_value = 
-//    ((((initial_value + input_value[DATA_WIDTH*0 +: DATA_WIDTH] * WEIGHTS[8*(input_index+0) +: 8])
-//                      + input_value[DATA_WIDTH*1 +: DATA_WIDTH] * WEIGHTS[8*(input_index+1) +: 8]) 
-//                      + input_value[DATA_WIDTH*2 +: DATA_WIDTH] * WEIGHTS[8*(input_index+2) +: 8]) 
-//                      + input_value[DATA_WIDTH*3 +: DATA_WIDTH] * WEIGHTS[8*(input_index+3) +: 8]);
-//end
-//endfunction
-
-//initial begin 
-//    result = 0; 
-//end
-    
-//always @ (posedge clk) begin
-//    if (input_enable) begin
-//        if (input_index == 0) accumulator <= increase_value(0);
-//        else if (input_index == WEIGHT_AMOUNT-INPUT_AMOUNT && input_result[DATA_WIDTH]) 
-//            result <= {1'b1, increase_value(accumulator)};
-//        else accumulator <= increase_value(accumulator);
-        
-//        output_value <= input_value;
-//        output_index <= input_index;
-//        output_enable <= input_enable;
-//    end
-//    else begin
-//        output_value <= 0;
-//        output_index <= 0;
-//        output_enable <= 0;
-//    end
-    
-//    if (input_result[DATA_WIDTH]) output_result <= input_result;
-//    else begin
-//        if (result[DATA_WIDTH]) begin 
-//            output_result <= result;
-//            result[DATA_WIDTH] <= 1'b0;
-//        end
-//        else if (input_enable && input_index == WEIGHT_AMOUNT-INPUT_AMOUNT) 
-//            output_result <= {1'b1, increase_value(accumulator)};
-//        else output_result <= 0; 
-//    end
-//end
 
 endmodule

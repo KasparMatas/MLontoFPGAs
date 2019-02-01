@@ -6,6 +6,7 @@
 `define WEIGHT_AMOUNT_2 4
 `define WEIGHT_AMOUNT_3 4
 `define WEIGHT_AMOUNT_4 2
+`define WEIGHT_AMOUNT_5 8
 //////////////////////////////////////////////////////////////////////////////////
 // Company: 
 // Engineer: 
@@ -546,22 +547,87 @@ module integration_simulator();
         .output_enable(input_enable_5_4)
     );
     
-    // TEMPORARY OUTPUT
+    // FIFTH LAYER with 2 universal cells with 4 inputs and 1 RELU
+    
+    wire [`DATA_WIDTH:0] input_result_5;
+    
+    wire [`DATA_WIDTH-1:0] index_18_19;
+    wire [`DATA_WIDTH*4-1:0] value_18_19;
+    wire [`DATA_WIDTH:0] result_18_19;
+    wire enable_18_19;  
+    
+    universal_weight_comp_cell #(
+        .DATA_WIDTH(`DATA_WIDTH), 
+        .WEIGHT_AMOUNT(`WEIGHT_AMOUNT_5), 
+        .WEIGHTS({8'd2, 8'd2, 8'd2, 8'd2, 8'd2, 8'd2, 8'd2, 8'd2}),
+        .INPUT_AMOUNT(4)
+    ) cell_5_1 (
+        .clk(clk), 
+        .input_index(input_index_5_1),
+        .input_value({input_value_5_4, input_value_5_3, input_value_5_2, input_value_5_1}),
+        .input_result(input_result_5),
+        .input_enable(input_enable_5_1),
+        .output_index(index_18_19),
+        .output_value(value_18_19),
+        .output_result(result_18_19),
+        .output_enable(enable_18_19)
+    );
+
+    wire [`DATA_WIDTH-1:0] output_index_5;
+    wire [`DATA_WIDTH*4-1:0] output_value_5;
+    wire [`DATA_WIDTH:0] output_result_5;
+    wire output_enable_5;  
+    
+    universal_weight_comp_cell #(
+        .DATA_WIDTH(`DATA_WIDTH), 
+        .WEIGHT_AMOUNT(`WEIGHT_AMOUNT_5), 
+        .WEIGHTS({8'd1, 8'd1, 8'd1, 8'd1, 8'd1, 8'd1, 8'd1, 8'd1}),
+        .INPUT_AMOUNT(4)
+    ) cell_5_2 (
+        .clk(clk), 
+        .input_index(index_18_19),
+        .input_value(value_18_19),
+        .input_result(result_18_19),
+        .input_enable(enable_18_19),
+        .output_index(output_index_5),
+        .output_value(output_value_5),
+        .output_result(output_result_5),
+        .output_enable(output_enable_5)
+    );
+    
+    wire [`DATA_WIDTH-1:0] input_index_6;
+    wire [`DATA_WIDTH-1:0] input_value_6;
+    wire input_enable_6;
+    
+    relu_cell #(
+        .DATA_WIDTH(`DATA_WIDTH), 
+        .CELL_AMOUNT(2)
+    ) activation_cell_5 (
+        .clk(clk), 
+        .input_result(output_result_5),
+        .output_index(input_index_6),
+        .output_value(input_value_6),
+        .output_enable(input_enable_6)
+    );
+    
+    // OUTPUT
 
     argmax_cell #(
         .DATA_WIDTH(`DATA_WIDTH),
         .CELL_AMOUNT(2)
     ) result_cell (
         .clk(clk), 
-        .input_index(input_index_4),
-        .input_value(input_value_4),
-        .input_enable(input_enable_4),
+        .input_index(input_index_6),
+        .input_value(input_value_6),
+        .input_enable(input_enable_6),
         .output_result(output_result)
     );  
 
     assign input_result = {1'b0, 32'bx}; 
     assign input_result_2 = {1'b0, 32'bx};
     assign input_result_3 = {1'b0, 32'bx};   
+    assign input_result_4 = {1'b0, 32'bx};
+    assign input_result_5 = {1'b0, 32'bx}; 
     
     initial begin
         clk = 1;
@@ -603,12 +669,14 @@ module integration_simulator();
     reg [3:0] output_2_values_checked;
     reg [3:0] output_3_values_checked;
     reg [3:0] output_4_values_checked;
+    reg [3:0] output_5_values_checked;
     
     initial begin
         output_1_values_checked = 0;
         output_2_values_checked = 0;
         output_3_values_checked = 0;
         output_4_values_checked = 0;
+        output_5_values_checked = 0;
     end
     
     task check_output_according_to_index(input [`DATA_WIDTH-1:0] input_index, 
@@ -682,6 +750,11 @@ module integration_simulator();
             check_output_values(output_4_values_checked, input_index_5_4, input_value_5_4, {32'd852, 32'd1006},
                 {32'd1704, 32'd2012}, 2, 3);
             if (input_index_5_1 == 1) output_4_values_checked <= output_4_values_checked + 1; 
+        end
+        if (input_enable_6) begin
+            check_output_values(output_5_values_checked, input_index_6, input_value_6, {32'd10024, 32'd20048}, 
+                {32'd20048, 32'd40096}, 2, 4);
+            if (input_index_6 == 1) output_5_values_checked <= output_5_values_checked + 1; 
         end   
     end
     
