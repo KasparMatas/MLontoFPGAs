@@ -29,7 +29,7 @@ module relu_cell_simulator();
         #`CLOCK $stop;
     end
 
-    task check_output(input [`DATA_WIDTH-1:0] result, input [`DATA_WIDTH-1:0] golden);
+    task check_output(input [`DATA_WIDTH*2-1:0] result, input [`DATA_WIDTH*2-1:0] golden);
     begin
         if (result!=golden) begin
             $display("Output is %0d which should be %0d instead!", result, golden);
@@ -48,13 +48,14 @@ module relu_cell_simulator();
     endtask
     
     reg clk;
-    reg [`DATA_WIDTH:0] input_result;
+    reg [`DATA_WIDTH*2:0] input_result;
     wire [`DATA_WIDTH-1:0] output_index;
     wire [`DATA_WIDTH-1:0] output_value;
     wire output_enable;  
 
     relu_cell #(
         .DATA_WIDTH(`DATA_WIDTH), 
+        .RESULT_WIDTH(`DATA_WIDTH*2),
         .CELL_AMOUNT(2)
     ) uut (
         .clk(clk), 
@@ -81,32 +82,32 @@ module relu_cell_simulator();
         check_output(output_value, 0);
         check_output(output_index, 0);
         check_enable(output_enable, 0); 
-        input_result[`DATA_WIDTH-1:0] = 1;
-        input_result[`DATA_WIDTH] = 1;
+        input_result[`DATA_WIDTH*2-1:0] = 1;
+        input_result[`DATA_WIDTH*2] = 1;
         #`CLOCK; 
         check_output(output_value, 1);
         check_output(output_index, 0);
         check_enable(output_enable, 1);
-        input_result[`DATA_WIDTH-1:0] = -1;
-        input_result[`DATA_WIDTH] = 1;
+        input_result[`DATA_WIDTH*2-1:0] = -1;
+        input_result[`DATA_WIDTH*2] = 1;
         #`CLOCK; 
         check_output(output_value, 0);
         check_output(output_index, 1);
         check_enable(output_enable, 1);
-        input_result[`DATA_WIDTH-1:0] = -20;
-        input_result[`DATA_WIDTH] = 1;
+        input_result[`DATA_WIDTH*2-1:0] = -20;
+        input_result[`DATA_WIDTH*2] = 1;
         #`CLOCK; 
         check_output(output_value, 0);
         check_output(output_index, 0);
         check_enable(output_enable, 1);
-        input_result[`DATA_WIDTH-1:0] = 15;
-        input_result[`DATA_WIDTH] = 1;
+        input_result[`DATA_WIDTH*2-1:0] = 15;
+        input_result[`DATA_WIDTH*2] = 1;
         #`CLOCK;
         check_output(output_value, 15);
         check_output(output_index, 1);
         check_enable(output_enable, 1);
-        input_result[`DATA_WIDTH-1:0] = 15;
-        input_result[`DATA_WIDTH] = 0;
+        input_result[`DATA_WIDTH*2-1:0] = 15;
+        input_result[`DATA_WIDTH*2] = 0;
         #`CLOCK;
         check_output(output_value, 0);
         check_output(output_index, 0);

@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-`define DATA_WIDTH 32
+`define DATA_WIDTH 8
 `define CLOCK 20 
 //////////////////////////////////////////////////////////////////////////////////
 // Company: 
@@ -31,10 +31,10 @@ module universal_weight_comp_cell_simulator();
         #`CLOCK $stop;
     end
 
-    task check_output(input [`DATA_WIDTH:0] result, input [`DATA_WIDTH:0] golden);
+    task check_output(input [`DATA_WIDTH*2:0] result, input [`DATA_WIDTH*2:0] golden);
     begin
         if (result!==golden) begin
-            $display("Output is %0d which should be %0d instead!", result[`DATA_WIDTH-1:0], golden[`DATA_WIDTH-1:0]);
+            $display("Output is %0d which should be %0d instead!", result[`DATA_WIDTH*2-1:0], golden[`DATA_WIDTH*2-1:0]);
             ->error;
         end
     end
@@ -43,15 +43,16 @@ module universal_weight_comp_cell_simulator();
     reg clk;
     reg [`DATA_WIDTH-1:0] input_index;
     reg [4*`DATA_WIDTH-1:0] input_value;
-    reg [`DATA_WIDTH:0] input_result;
+    reg [`DATA_WIDTH*2:0] input_result;
     reg input_enable;
     wire [`DATA_WIDTH-1:0] output_index;
     wire [4*`DATA_WIDTH-1:0] output_value;
-    wire [`DATA_WIDTH:0] output_result;
+    wire [`DATA_WIDTH*2:0] output_result;
     wire output_enable;  
 
     universal_weight_comp_cell #(
         .DATA_WIDTH(`DATA_WIDTH), 
+        .RESULT_WIDTH(`DATA_WIDTH*2),
         .WEIGHT_AMOUNT(8), 
         .WEIGHTS({8'd1, 8'd1, 8'd1, 8'd1, 8'd1, 8'd1, 8'd1, 8'd1}),
         .INPUT_AMOUNT(4)
@@ -83,30 +84,30 @@ initial begin
     #2;
     #(`CLOCK*2); 
     input_enable = 1;
-    input_value = {32'd0, 32'd1, 32'd1, 32'd1};
+    input_value = {8'd0, 8'd1, 8'd1, 8'd1};
     #(`CLOCK); 
-    check_output(output_result, {1'b0, 32'd0});
+    check_output(output_result, {1'b0, 16'd0});
     input_index = 1;
-    input_value = {32'd1, 32'd2, 32'd3, 32'd4};
+    input_value = {8'd1, 8'd2, 8'd3, 8'd4};
     #(`CLOCK); 
-    check_output(output_result, {1'b1, 32'd13});
+    check_output(output_result, {1'b1, 16'd13});
     input_index = 0;  
-    input_value = {32'd1, 32'd1, 32'd1, 32'd1}; 
-    input_result = {1'b1, 32'd6};
+    input_value = {8'd1, 8'd1, 8'd1, 8'd1}; 
+    input_result = {1'b1, 16'd6};
     #(`CLOCK); 
-    check_output(output_result, {1'b1, 32'd6});
+    check_output(output_result, {1'b1, 16'd6});
     input_index = 1;   
-    input_value = {32'd1, 32'd2, 32'd3, 32'd4}; 
-    input_result = {1'b1, 32'd55};
+    input_value = {8'd1, 8'd2, 8'd3, 8'd4}; 
+    input_result = {1'b1, 16'd55};
     #(`CLOCK); 
-    check_output(output_result, {1'b1, 32'd55});
+    check_output(output_result, {1'b1, 16'd55});
     input_enable = 0;
-    input_result = {1'b1, 32'd45};
+    input_result = {1'b1, 16'd45};
     #(`CLOCK); 
-    input_result = {1'b0, 32'd100};
-    check_output(output_result, {1'b1, 32'd45});
+    input_result = {1'b0, 16'd100};
+    check_output(output_result, {1'b1, 16'd45});
     #(`CLOCK); 
-    check_output(output_result, {1'b1, 32'd14});
+    check_output(output_result, {1'b1, 16'd14});
     #(`CLOCK*2);
     $display("SUCCESSFUL TEST!"); 
     $stop;

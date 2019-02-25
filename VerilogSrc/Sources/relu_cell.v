@@ -21,11 +21,12 @@
 
 
 module relu_cell#(
-        parameter DATA_WIDTH = 32,
+        parameter DATA_WIDTH = 8,
+        parameter RESULT_WIDTH = 16,
         parameter CELL_AMOUNT = 4
     ) (
         input wire clk,
-        input wire [DATA_WIDTH:0] input_result,
+        input wire [RESULT_WIDTH:0] input_result,
         output reg [DATA_WIDTH-1:0] output_index,
         output reg [DATA_WIDTH-1:0] output_value,
         output reg output_enable
@@ -38,9 +39,9 @@ initial begin
 end
     
 always @ (posedge clk) begin #1
-    if (input_result[DATA_WIDTH]) begin
-        if (input_result[DATA_WIDTH-1]) output_value <= 0;
-        else output_value <= input_result[DATA_WIDTH-1:0];
+    if (input_result[RESULT_WIDTH]) begin
+        if (input_result[RESULT_WIDTH-1]) output_value <= 0;
+        else output_value <= input_result[RESULT_WIDTH-1:0];
         if (index == CELL_AMOUNT) begin
             output_index <= 0;
             index <= 1;

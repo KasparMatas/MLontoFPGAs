@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-`define DATA_WIDTH 32
+`define DATA_WIDTH 16
 `define CLOCK 20 
 //////////////////////////////////////////////////////////////////////////////////
 // Company: 
@@ -29,10 +29,10 @@ module weight_comp_cell_simulator();
         #`CLOCK $stop;
     end
 
-    task check_output(input [`DATA_WIDTH:0] result, input [`DATA_WIDTH:0] golden);
+    task check_output(input [`DATA_WIDTH*2:0] result, input [`DATA_WIDTH*2:0] golden);
     begin
         if (result!==golden) begin
-            $display("Output is %0d which should be %0d instead!", result[`DATA_WIDTH-1:0], golden[`DATA_WIDTH-1:0]);
+            $display("Output is %0d which should be %0d instead!", result[`DATA_WIDTH*2-1:0], golden[`DATA_WIDTH*2-1:0]);
             ->error;
         end
     end
@@ -41,17 +41,18 @@ module weight_comp_cell_simulator();
     reg clk;
     reg [`DATA_WIDTH-1:0] input_index;
     reg [`DATA_WIDTH-1:0] input_value;
-    reg [`DATA_WIDTH:0] input_result;
+    reg [`DATA_WIDTH*2:0] input_result;
     reg input_enable;
     wire [`DATA_WIDTH-1:0] output_index;
     wire [`DATA_WIDTH-1:0] output_value;
-    wire [`DATA_WIDTH:0] output_result;
+    wire [`DATA_WIDTH*2:0] output_result;
     wire output_enable;  
 
     weight_comp_cell #(
         .DATA_WIDTH(`DATA_WIDTH), 
+        .RESULT_WIDTH(`DATA_WIDTH*2), 
         .WEIGHT_AMOUNT(2), 
-        .WEIGHTS({32'd4, 32'd1})
+        .WEIGHTS({8'd4, 8'd1})
     ) uut (
         .clk(clk), 
         .input_index(input_index),
