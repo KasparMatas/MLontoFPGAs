@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-`define DATA_WIDTH 32
+`define DATA_WIDTH 8
 //////////////////////////////////////////////////////////////////////////////////
 // Company: 
 // Engineer: 
@@ -30,19 +30,19 @@ module multiply_and_add_simulator();
         #100 $stop;
     end
 
-    task check_output(input [`DATA_WIDTH:0] result, input [`DATA_WIDTH:0] golden);
+    task check_output(input [`DATA_WIDTH*2:0] result, input [`DATA_WIDTH*2:0] golden);
     begin
         if (result!==golden) begin
-            $display("Output is %0d which should be %0d instead!", result[`DATA_WIDTH-1:0], golden[`DATA_WIDTH-1:0]);
+            $display("Output is %0d which should be %0d instead!", result[`DATA_WIDTH*2-1:0], golden[`DATA_WIDTH*2-1:0]);
             ->error;
         end
     end
     endtask
     
-    reg [`DATA_WIDTH-1:0] add_value;
+    reg [`DATA_WIDTH*2-1:0] add_value;
     reg [`DATA_WIDTH-1:0] input_value;
     reg [7:0] weight_value;
-    wire [`DATA_WIDTH-1:0] output_value;
+    wire [`DATA_WIDTH*2-1:0] output_value;
     
     multiply_and_add #(
         .DATA_WIDTH(`DATA_WIDTH)
@@ -61,25 +61,25 @@ module multiply_and_add_simulator();
     
     initial begin
         #100; 
-        check_output(output_value, 32'd0);
+        check_output(output_value, 16'd0);
         #100; 
-        add_value = 32'd1;
+        add_value = 16'd1;
         #10;
-        check_output(output_value, 32'd1);
+        check_output(output_value, 16'd1);
         #100; 
-        input_value = 32'd2;
+        input_value = 8'd2;
         #10;
-        check_output(output_value, 32'd1);
+        check_output(output_value, 16'd1);
         #100; 
-        weight_value = 32'd3;
+        weight_value = 8'd3;
         #10;
-        check_output(output_value, 32'd7);
+        check_output(output_value, 16'd7);
         #100;
-        add_value = 32'd10;
-        input_value = 32'd5;
-        weight_value = 32'd2;
+        add_value = 16'd10;
+        input_value = 8'd5;
+        weight_value = 8'd2;
         #10;
-        check_output(output_value, 32'd20);
+        check_output(output_value, 16'd20);
         $display("SUCCESSFUL TEST!"); 
         $stop;
     end

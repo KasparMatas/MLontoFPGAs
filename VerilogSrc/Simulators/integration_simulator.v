@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-`define DATA_WIDTH 32
+`define DATA_WIDTH 16
 `define CLOCK 20 
 `define WEIGHT_AMOUNT_1 4
 `define WEIGHT_AMOUNT_2 4
@@ -33,7 +33,7 @@ module integration_simulator();
         #`CLOCK $stop;
     end
 
-    task check_output(input [`DATA_WIDTH-1:0] result, input [`DATA_WIDTH-1:0] golden);
+    task check_output(input [`DATA_WIDTH*2-1:0] result, input [`DATA_WIDTH*2-1:0] golden);
     begin
         if (result!=golden) begin
             $display("Output is %0d which should be %0d instead!", result, golden);
@@ -46,21 +46,22 @@ module integration_simulator();
     reg [`DATA_WIDTH-1:0] input_index;
     reg [`DATA_WIDTH-1:0] input_value;
     reg input_enable;
-    wire [`DATA_WIDTH:0] output_result;
+    wire [`DATA_WIDTH*2:0] output_result;
     
     // FIRST LAYER with 4 cells and a RELU
     
-    wire [`DATA_WIDTH:0] input_result;
+    wire [`DATA_WIDTH*2:0] input_result;
     
     wire [`DATA_WIDTH-1:0] index_1_2;
     wire [`DATA_WIDTH-1:0] value_1_2;
-    wire [`DATA_WIDTH:0] result_1_2;
+    wire [`DATA_WIDTH*2:0] result_1_2;
     wire enable_1_2;  
 
     weight_comp_cell #(
         .DATA_WIDTH(`DATA_WIDTH), 
+        .RESULT_WIDTH(`DATA_WIDTH*2), 
         .WEIGHT_AMOUNT(`WEIGHT_AMOUNT_1), 
-        .WEIGHTS({32'd1, 32'd2, 32'd3, 32'd4})
+        .WEIGHTS({8'd1, 8'd2, 8'd3, 8'd4})
     ) cell_1_1 (
         .clk(clk), 
         .input_index(input_index),
@@ -75,13 +76,14 @@ module integration_simulator();
     
     wire [`DATA_WIDTH-1:0] index_2_3;
     wire [`DATA_WIDTH-1:0] value_2_3;
-    wire [`DATA_WIDTH:0] result_2_3;
+    wire [`DATA_WIDTH*2:0] result_2_3;
     wire enable_2_3; 
     
     weight_comp_cell #(
         .DATA_WIDTH(`DATA_WIDTH), 
+        .RESULT_WIDTH(`DATA_WIDTH*2), 
         .WEIGHT_AMOUNT(`WEIGHT_AMOUNT_1), 
-        .WEIGHTS({32'd5, 32'd3, 32'd2, 32'd1})
+        .WEIGHTS({8'd5, 8'd3, 8'd2, 8'd1})
     ) cell_1_2 (
         .clk(clk), 
         .input_index(index_1_2),
@@ -96,13 +98,14 @@ module integration_simulator();
     
     wire [`DATA_WIDTH-1:0] index_3_4;
     wire [`DATA_WIDTH-1:0] value_3_4;
-    wire [`DATA_WIDTH:0] result_3_4;
+    wire [`DATA_WIDTH*2:0] result_3_4;
     wire enable_3_4; 
     
     weight_comp_cell #(
         .DATA_WIDTH(`DATA_WIDTH), 
+        .RESULT_WIDTH(`DATA_WIDTH*2), 
         .WEIGHT_AMOUNT(`WEIGHT_AMOUNT_1), 
-        .WEIGHTS({32'd1, 32'd1, 32'd1, 32'd1})
+        .WEIGHTS({8'd1, 8'd1, 8'd1, 8'd1})
     ) cell_1_3 (
         .clk(clk), 
         .input_index(index_2_3),
@@ -117,13 +120,14 @@ module integration_simulator();
     
     wire [`DATA_WIDTH-1:0] output_index_1;
     wire [`DATA_WIDTH-1:0] output_value_1;
-    wire [`DATA_WIDTH:0] output_result_1;
+    wire [`DATA_WIDTH*2:0] output_result_1;
     wire output_enable_1;
     
     weight_comp_cell #(
         .DATA_WIDTH(`DATA_WIDTH), 
+        .RESULT_WIDTH(`DATA_WIDTH*2), 
         .WEIGHT_AMOUNT(`WEIGHT_AMOUNT_1), 
-        .WEIGHTS({32'd4, 32'd4, 32'd4, 32'd4})
+        .WEIGHTS({8'd4, 8'd4, 8'd4, 8'd4})
     ) cell_1_4 (
         .clk(clk), 
         .input_index(index_3_4),
@@ -142,6 +146,7 @@ module integration_simulator();
     
     relu_cell #(
         .DATA_WIDTH(`DATA_WIDTH), 
+        .RESULT_WIDTH(`DATA_WIDTH*2),
         .CELL_AMOUNT(4)
     ) activation_cell_1 (
         .clk(clk), 
@@ -153,17 +158,18 @@ module integration_simulator();
     
     // SECOND LAYER with 4 cells and a RELU
 
-    wire [`DATA_WIDTH:0] input_result_2;
+    wire [`DATA_WIDTH*2:0] input_result_2;
 
     wire [`DATA_WIDTH-1:0] index_5_6;
     wire [`DATA_WIDTH-1:0] value_5_6;
-    wire [`DATA_WIDTH:0] result_5_6;
+    wire [`DATA_WIDTH*2:0] result_5_6;
     wire enable_5_6;  
 
     weight_comp_cell #(
         .DATA_WIDTH(`DATA_WIDTH), 
+        .RESULT_WIDTH(`DATA_WIDTH*2), 
         .WEIGHT_AMOUNT(`WEIGHT_AMOUNT_2), 
-        .WEIGHTS({32'd1, 32'd2, 32'd3, 32'd4})
+        .WEIGHTS({8'd1, 8'd2, 8'd3, 8'd4})
     ) cell_2_1 (
         .clk(clk), 
         .input_index(input_index_2),
@@ -178,13 +184,14 @@ module integration_simulator();
     
     wire [`DATA_WIDTH-1:0] index_6_7;
     wire [`DATA_WIDTH-1:0] value_6_7;
-    wire [`DATA_WIDTH:0] result_6_7;
+    wire [`DATA_WIDTH*2:0] result_6_7;
     wire enable_6_7; 
     
     weight_comp_cell #(
         .DATA_WIDTH(`DATA_WIDTH), 
+        .RESULT_WIDTH(`DATA_WIDTH*2), 
         .WEIGHT_AMOUNT(`WEIGHT_AMOUNT_2), 
-        .WEIGHTS({32'd5, 32'd3, 32'd2, 32'd1})
+        .WEIGHTS({8'd5, 8'd3, 8'd2, 8'd1})
     ) cell_2_2 (
         .clk(clk), 
         .input_index(index_5_6),
@@ -199,13 +206,14 @@ module integration_simulator();
     
     wire [`DATA_WIDTH-1:0] index_7_8;
     wire [`DATA_WIDTH-1:0] value_7_8;
-    wire [`DATA_WIDTH:0] result_7_8;
+    wire [`DATA_WIDTH*2:0] result_7_8;
     wire enable_7_8; 
     
     weight_comp_cell #(
         .DATA_WIDTH(`DATA_WIDTH), 
+        .RESULT_WIDTH(`DATA_WIDTH*2), 
         .WEIGHT_AMOUNT(`WEIGHT_AMOUNT_2), 
-        .WEIGHTS({32'd1, 32'd1, 32'd1, 32'd1})
+        .WEIGHTS({8'd1, 8'd1, 8'd1, 8'd1})
     ) cell_2_3 (
         .clk(clk), 
         .input_index(index_6_7),
@@ -220,13 +228,14 @@ module integration_simulator();
     
     wire [`DATA_WIDTH-1:0] output_index_2;
     wire [`DATA_WIDTH-1:0] output_value_2;
-    wire [`DATA_WIDTH:0] output_result_2;
+    wire [`DATA_WIDTH*2:0] output_result_2;
     wire output_enable_2;
     
     weight_comp_cell #(
         .DATA_WIDTH(`DATA_WIDTH), 
+        .RESULT_WIDTH(`DATA_WIDTH*2), 
         .WEIGHT_AMOUNT(`WEIGHT_AMOUNT_2), 
-        .WEIGHTS({32'd4, 32'd4, 32'd4, 32'd4})
+        .WEIGHTS({8'd4, 8'd4, 8'd4, 8'd4})
     ) cell_2_4 (
         .clk(clk), 
         .input_index(index_7_8),
@@ -245,6 +254,7 @@ module integration_simulator();
     
     relu_cell #(
         .DATA_WIDTH(`DATA_WIDTH), 
+        .RESULT_WIDTH(`DATA_WIDTH*2),
         .CELL_AMOUNT(4)
     ) activation_cell_2 (
         .clk(clk), 
@@ -256,17 +266,18 @@ module integration_simulator();
     
     // THIRD LAYER with 2 cells and a RELU 
     
-    wire [`DATA_WIDTH:0] input_result_3;
+    wire [`DATA_WIDTH*2:0] input_result_3;
     
     wire [`DATA_WIDTH-1:0] index_8_9;
     wire [`DATA_WIDTH-1:0] value_8_9;
-    wire [`DATA_WIDTH:0] result_8_9;
+    wire [`DATA_WIDTH*2:0] result_8_9;
     wire enable_8_9;  
 
     weight_comp_cell #(
         .DATA_WIDTH(`DATA_WIDTH), 
+        .RESULT_WIDTH(`DATA_WIDTH*2), 
         .WEIGHT_AMOUNT(`WEIGHT_AMOUNT_3), 
-        .WEIGHTS({32'd1, 32'd2, 32'd3, 32'd4})
+        .WEIGHTS({8'd1, 8'd2, 8'd3, 8'd4})
     ) cell_3_1 (
         .clk(clk), 
         .input_index(input_index_3),
@@ -281,13 +292,14 @@ module integration_simulator();
     
     wire [`DATA_WIDTH-1:0] output_index_3;
     wire [`DATA_WIDTH-1:0] output_value_3;
-    wire [`DATA_WIDTH:0] output_result_3;
+    wire [`DATA_WIDTH*2:0] output_result_3;
     wire output_enable_3;
     
     weight_comp_cell #(
         .DATA_WIDTH(`DATA_WIDTH), 
+        .RESULT_WIDTH(`DATA_WIDTH*2), 
         .WEIGHT_AMOUNT(`WEIGHT_AMOUNT_3), 
-        .WEIGHTS({32'd1, 32'd1, 32'd1, 32'd1})
+        .WEIGHTS({8'd1, 8'd1, 8'd1, 8'd1})
     ) cell_3_2 (
         .clk(clk), 
         .input_index(index_8_9),
@@ -306,6 +318,7 @@ module integration_simulator();
     
     relu_cell #(
         .DATA_WIDTH(`DATA_WIDTH), 
+        .RESULT_WIDTH(`DATA_WIDTH*2),
         .CELL_AMOUNT(2)
     ) activation_cell_3 (
         .clk(clk), 
@@ -317,17 +330,18 @@ module integration_simulator();
     
     // FOURTH LAYER with 8 cells and 4 RELUs
 
-    wire [`DATA_WIDTH:0] input_result_4;
+    wire [`DATA_WIDTH*2:0] input_result_4;
     
     wire [`DATA_WIDTH-1:0] index_10_14;
     wire [`DATA_WIDTH-1:0] value_10_14;
-    wire [`DATA_WIDTH:0] result_10_14;
+    wire [`DATA_WIDTH*2:0] result_10_14;
     wire enable_10_14;  
 
     weight_comp_cell #(
         .DATA_WIDTH(`DATA_WIDTH), 
+        .RESULT_WIDTH(`DATA_WIDTH*2), 
         .WEIGHT_AMOUNT(`WEIGHT_AMOUNT_4), 
-        .WEIGHTS({32'd1, 32'd2})
+        .WEIGHTS({8'd1, 8'd2})
     ) cell_4_1 (
         .clk(clk), 
         .input_index(input_index_4),
@@ -342,13 +356,14 @@ module integration_simulator();
 
     wire [`DATA_WIDTH-1:0] index_11_15;
     wire [`DATA_WIDTH-1:0] value_11_15;
-    wire [`DATA_WIDTH:0] result_11_15;
+    wire [`DATA_WIDTH*2:0] result_11_15;
     wire enable_11_15;
     
     weight_comp_cell #(
         .DATA_WIDTH(`DATA_WIDTH), 
+        .RESULT_WIDTH(`DATA_WIDTH*2), 
         .WEIGHT_AMOUNT(`WEIGHT_AMOUNT_4), 
-        .WEIGHTS({32'd1, 32'd1})
+        .WEIGHTS({8'd1, 8'd1})
     ) cell_4_2 (
         .clk(clk), 
         .input_index(input_index_4),
@@ -363,13 +378,14 @@ module integration_simulator();
 
     wire [`DATA_WIDTH-1:0] index_12_16;
     wire [`DATA_WIDTH-1:0] value_12_16;
-    wire [`DATA_WIDTH:0] result_12_16;
+    wire [`DATA_WIDTH*2:0] result_12_16;
     wire enable_12_16;
     
     weight_comp_cell #(
         .DATA_WIDTH(`DATA_WIDTH), 
+        .RESULT_WIDTH(`DATA_WIDTH*2), 
         .WEIGHT_AMOUNT(`WEIGHT_AMOUNT_4), 
-        .WEIGHTS({32'd2, 32'd1})
+        .WEIGHTS({8'd2, 8'd1})
     ) cell_4_3 (
         .clk(clk), 
         .input_index(input_index_4),
@@ -384,13 +400,14 @@ module integration_simulator();
 
     wire [`DATA_WIDTH-1:0] index_13_17;
     wire [`DATA_WIDTH-1:0] value_13_17;
-    wire [`DATA_WIDTH:0] result_13_17;
+    wire [`DATA_WIDTH*2:0] result_13_17;
     wire enable_13_17;
     
     weight_comp_cell #(
         .DATA_WIDTH(`DATA_WIDTH), 
+        .RESULT_WIDTH(`DATA_WIDTH*2), 
         .WEIGHT_AMOUNT(`WEIGHT_AMOUNT_4), 
-        .WEIGHTS({32'd0, 32'd1})
+        .WEIGHTS({8'd0, 8'd1})
     ) cell_4_4 (
         .clk(clk), 
         .input_index(input_index_4),
@@ -405,13 +422,14 @@ module integration_simulator();
     
     wire [`DATA_WIDTH-1:0] output_index_4_1;
     wire [`DATA_WIDTH-1:0] output_value_4_1;
-    wire [`DATA_WIDTH:0] output_result_4_1;
+    wire [`DATA_WIDTH*2:0] output_result_4_1;
     wire output_enable_4_1;
     
     weight_comp_cell #(
         .DATA_WIDTH(`DATA_WIDTH), 
+        .RESULT_WIDTH(`DATA_WIDTH*2), 
         .WEIGHT_AMOUNT(`WEIGHT_AMOUNT_4), 
-        .WEIGHTS({32'd1, 32'd0})
+        .WEIGHTS({8'd1, 8'd0})
     ) cell_4_5 (
         .clk(clk), 
         .input_index(index_10_14),
@@ -430,6 +448,7 @@ module integration_simulator();
     
     relu_cell #(
         .DATA_WIDTH(`DATA_WIDTH), 
+        .RESULT_WIDTH(`DATA_WIDTH*2),
         .CELL_AMOUNT(2)
     ) activation_cell_4_1 (
         .clk(clk), 
@@ -441,13 +460,14 @@ module integration_simulator();
     
     wire [`DATA_WIDTH-1:0] output_index_4_2;
     wire [`DATA_WIDTH-1:0] output_value_4_2;
-    wire [`DATA_WIDTH:0] output_result_4_2;
+    wire [`DATA_WIDTH*2:0] output_result_4_2;
     wire output_enable_4_2;
     
     weight_comp_cell #(
         .DATA_WIDTH(`DATA_WIDTH), 
+        .RESULT_WIDTH(`DATA_WIDTH*2), 
         .WEIGHT_AMOUNT(`WEIGHT_AMOUNT_4), 
-        .WEIGHTS({32'd0, 32'd0})
+        .WEIGHTS({8'd0, 8'd0})
     ) cell_4_6 (
         .clk(clk), 
         .input_index(index_11_15),
@@ -466,6 +486,7 @@ module integration_simulator();
     
     relu_cell #(
         .DATA_WIDTH(`DATA_WIDTH), 
+        .RESULT_WIDTH(`DATA_WIDTH*2),
         .CELL_AMOUNT(2)
     ) activation_cell_4_2 (
         .clk(clk), 
@@ -477,13 +498,14 @@ module integration_simulator();
     
     wire [`DATA_WIDTH-1:0] output_index_4_3;
     wire [`DATA_WIDTH-1:0] output_value_4_3;
-    wire [`DATA_WIDTH:0] output_result_4_3;
+    wire [`DATA_WIDTH*2:0] output_result_4_3;
     wire output_enable_4_3;
     
     weight_comp_cell #(
         .DATA_WIDTH(`DATA_WIDTH), 
+        .RESULT_WIDTH(`DATA_WIDTH*2), 
         .WEIGHT_AMOUNT(`WEIGHT_AMOUNT_4), 
-        .WEIGHTS({32'd0, 32'd2})
+        .WEIGHTS({8'd0, 8'd2})
     ) cell_4_7 (
         .clk(clk), 
         .input_index(index_12_16),
@@ -502,6 +524,7 @@ module integration_simulator();
     
     relu_cell #(
         .DATA_WIDTH(`DATA_WIDTH), 
+        .RESULT_WIDTH(`DATA_WIDTH*2),
         .CELL_AMOUNT(2)
     ) activation_cell_4_3 (
         .clk(clk), 
@@ -513,13 +536,14 @@ module integration_simulator();
     
     wire [`DATA_WIDTH-1:0] output_index_4_4;
     wire [`DATA_WIDTH-1:0] output_value_4_4;
-    wire [`DATA_WIDTH:0] output_result_4_4;
+    wire [`DATA_WIDTH*2:0] output_result_4_4;
     wire output_enable_4_4;
     
     weight_comp_cell #(
         .DATA_WIDTH(`DATA_WIDTH), 
+        .RESULT_WIDTH(`DATA_WIDTH*2), 
         .WEIGHT_AMOUNT(`WEIGHT_AMOUNT_4), 
-        .WEIGHTS({32'd2, 32'd0})
+        .WEIGHTS({8'd2, 8'd0})
     ) cell_4_8 (
         .clk(clk), 
         .input_index(index_13_17),
@@ -538,6 +562,7 @@ module integration_simulator();
     
     relu_cell #(
         .DATA_WIDTH(`DATA_WIDTH), 
+        .RESULT_WIDTH(`DATA_WIDTH*2),
         .CELL_AMOUNT(2)
     ) activation_cell_4_4 (
         .clk(clk), 
@@ -549,15 +574,16 @@ module integration_simulator();
     
     // FIFTH LAYER with 2 universal cells with 4 inputs and 1 RELU
     
-    wire [`DATA_WIDTH:0] input_result_5;
+    wire [`DATA_WIDTH*2:0] input_result_5;
     
     wire [`DATA_WIDTH-1:0] index_18_19;
     wire [`DATA_WIDTH*4-1:0] value_18_19;
-    wire [`DATA_WIDTH:0] result_18_19;
+    wire [`DATA_WIDTH*2:0] result_18_19;
     wire enable_18_19;  
     
     universal_weight_comp_cell #(
-        .DATA_WIDTH(`DATA_WIDTH), 
+        .DATA_WIDTH(`DATA_WIDTH),
+        .RESULT_WIDTH(`DATA_WIDTH*2),  
         .WEIGHT_AMOUNT(`WEIGHT_AMOUNT_5), 
         .WEIGHTS({8'd2, 8'd2, 8'd2, 8'd2, 8'd2, 8'd2, 8'd2, 8'd2}),
         .INPUT_AMOUNT(4)
@@ -575,11 +601,12 @@ module integration_simulator();
 
     wire [`DATA_WIDTH-1:0] output_index_5;
     wire [`DATA_WIDTH*4-1:0] output_value_5;
-    wire [`DATA_WIDTH:0] output_result_5;
+    wire [`DATA_WIDTH*2:0] output_result_5;
     wire output_enable_5;  
     
     universal_weight_comp_cell #(
         .DATA_WIDTH(`DATA_WIDTH), 
+        .RESULT_WIDTH(`DATA_WIDTH*2), 
         .WEIGHT_AMOUNT(`WEIGHT_AMOUNT_5), 
         .WEIGHTS({8'd1, 8'd1, 8'd1, 8'd1, 8'd1, 8'd1, 8'd1, 8'd1}),
         .INPUT_AMOUNT(4)
@@ -601,6 +628,7 @@ module integration_simulator();
     
     relu_cell #(
         .DATA_WIDTH(`DATA_WIDTH), 
+        .RESULT_WIDTH(`DATA_WIDTH*2),
         .CELL_AMOUNT(2)
     ) activation_cell_5 (
         .clk(clk), 
@@ -614,6 +642,7 @@ module integration_simulator();
 
     argmax_cell #(
         .DATA_WIDTH(`DATA_WIDTH),
+        .RESULT_WIDTH(`DATA_WIDTH*2),
         .CELL_AMOUNT(2)
     ) result_cell (
         .clk(clk), 
@@ -718,18 +747,18 @@ module integration_simulator();
     
     always @ (posedge clk) begin
         if (input_enable_2) begin
-            check_output_values(output_1_values_checked, input_index_2, input_value_2, {32'd16, 32'd4, 32'd11, 32'd10}, 
-                {32'd32, 32'd8, 32'd22, 32'd20}, 4, 0);
+            check_output_values(output_1_values_checked, input_index_2, input_value_2, {16'd16, 16'd4, 16'd11, 16'd10}, 
+                {16'd32, 16'd8, 16'd22, 16'd20}, 4, 0);
             if (input_index_2 == 3) output_1_values_checked <= output_1_values_checked + 1; 
         end    
         if (input_enable_3) begin
-            check_output_values(output_2_values_checked, input_index_3, input_value_3, {32'd164, 32'd41, 32'd124, 32'd97}, 
-                {32'd328, 32'd82, 32'd248, 32'd194}, 4, 1);
+            check_output_values(output_2_values_checked, input_index_3, input_value_3, {16'd164, 16'd41, 16'd124, 16'd97}, 
+                {16'd328, 16'd82, 16'd248, 16'd194}, 4, 1);
             if (input_index_3 == 3) output_2_values_checked <= output_2_values_checked + 1; 
         end
         if (input_enable_4) begin
-            check_output_values(output_3_values_checked, input_index_4, input_value_4, {32'd426, 32'd1006}, 
-                {32'd852, 32'd2012}, 2, 2);
+            check_output_values(output_3_values_checked, input_index_4, input_value_4, {16'd426, 16'd1006}, 
+                {16'd852, 16'd2012}, 2, 2);
             if (input_index_4 == 1) output_3_values_checked <= output_3_values_checked + 1; 
         end
         if (input_enable_5_1 || input_enable_5_2 || input_enable_5_3 || input_enable_5_4) begin
@@ -741,19 +770,19 @@ module integration_simulator();
                 $display("Parallel cells are out of sync with index signals");
                 ->error;
             end 
-            check_output_values(output_4_values_checked, input_index_5_1, input_value_5_1, {32'd426, 32'd2438},
-                {32'd852, 32'd4876}, 2, 3);
-            check_output_values(output_4_values_checked, input_index_5_2, input_value_5_2, {32'd0, 32'd1432},
-                {32'd0, 32'd2864}, 2, 3);
-            check_output_values(output_4_values_checked, input_index_5_3, input_value_5_3, {32'd2012, 32'd1858},
-                {32'd4024, 32'd3716}, 2, 3);
-            check_output_values(output_4_values_checked, input_index_5_4, input_value_5_4, {32'd852, 32'd1006},
-                {32'd1704, 32'd2012}, 2, 3);
+            check_output_values(output_4_values_checked, input_index_5_1, input_value_5_1, {16'd426, 16'd2438},
+                {16'd852, 16'd4876}, 2, 3);
+            check_output_values(output_4_values_checked, input_index_5_2, input_value_5_2, {16'd0, 16'd1432},
+                {16'd0, 16'd2864}, 2, 3);
+            check_output_values(output_4_values_checked, input_index_5_3, input_value_5_3, {16'd2012, 16'd1858},
+                {16'd4024, 16'd3716}, 2, 3);
+            check_output_values(output_4_values_checked, input_index_5_4, input_value_5_4, {16'd852, 16'd1006},
+                {16'd1704, 16'd2012}, 2, 3);
             if (input_index_5_1 == 1) output_4_values_checked <= output_4_values_checked + 1; 
         end
         if (input_enable_6) begin
-            check_output_values(output_5_values_checked, input_index_6, input_value_6, {32'd10024, 32'd20048}, 
-                {32'd20048, 32'd40096}, 2, 4);
+            check_output_values(output_5_values_checked, input_index_6, input_value_6, {16'd10024, 16'd20048}, 
+                {16'd20048, 16'd40096}, 2, 4);
             if (input_index_6 == 1) output_5_values_checked <= output_5_values_checked + 1; 
         end   
     end
@@ -765,8 +794,8 @@ module integration_simulator();
     end
     
     always @ (posedge clk) begin
-        if (output_result[`DATA_WIDTH]) begin 
-            check_output(output_result[`DATA_WIDTH-1:0], 0);
+        if (output_result[`DATA_WIDTH*2]) begin 
+            check_output(output_result[`DATA_WIDTH*2-1:0], 0);
             output_results_checked <= output_results_checked+1;
             if (output_results_checked == 1) begin
                 #(`CLOCK*2);

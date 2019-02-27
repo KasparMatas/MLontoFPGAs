@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-`define DATA_WIDTH 32
+`define DATA_WIDTH 8
 `define CLOCK 20 
 //////////////////////////////////////////////////////////////////////////////////
 // Company: 
@@ -29,10 +29,10 @@ module argmax_simulator();
         #`CLOCK $stop;
     end
 
-    task check_output(input [`DATA_WIDTH:0] result, input [`DATA_WIDTH:0] golden);
+    task check_output(input [`DATA_WIDTH*2:0] result, input [`DATA_WIDTH*2:0] golden);
     begin
         if (result!==golden) begin
-            $display("Output is %0d which should be %0d instead!", result[`DATA_WIDTH-1:0], golden[`DATA_WIDTH-1:0]);
+            $display("Output is %0d which should be %0d instead!", result[`DATA_WIDTH*2-1:0], golden[`DATA_WIDTH*2-1:0]);
             ->error;
         end
     end
@@ -42,10 +42,11 @@ module argmax_simulator();
     reg [`DATA_WIDTH-1:0] input_index;
     reg [`DATA_WIDTH-1:0] input_value;
     reg input_enable;
-    wire [`DATA_WIDTH:0] output_result;
+    wire [`DATA_WIDTH*2:0] output_result;
 
     argmax_cell #(
         .DATA_WIDTH(`DATA_WIDTH),
+        .RESULT_WIDTH(`DATA_WIDTH*2),
         .CELL_AMOUNT(2)
     ) uut (
         .clk(clk), 
@@ -84,7 +85,7 @@ module argmax_simulator();
         input_value = 1;
         input_enable = 1;
         #`CLOCK;
-        check_output(output_result, {1'b1, 32'd0});
+        check_output(output_result, {1'b1, 16'd0});
         input_index = 0;
         input_value = 3;
         input_enable = 1;

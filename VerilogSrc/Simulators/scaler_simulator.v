@@ -1,14 +1,14 @@
 `timescale 1ns / 1ps
 
-`define DATA_WIDTH 32
+`define DATA_WIDTH 8
 `define CLOCK 20 
 //////////////////////////////////////////////////////////////////////////////////
 // Company: 
 // Engineer: 
 // 
-// Create Date: 20.11.2018 17:51:34
+// Create Date: 25.02.2019 15:49:13
 // Design Name: 
-// Module Name: relu_cell_simulator
+// Module Name: scaler_simulator
 // Project Name: 
 // Target Devices: 
 // Tool Versions: 
@@ -21,7 +21,7 @@
 // Additional Comments:
 // 
 //////////////////////////////////////////////////////////////////////////////////
-module relu_cell_simulator();
+module scaler_simulator();
     
     event error;
     always @ (error) begin
@@ -29,7 +29,7 @@ module relu_cell_simulator();
         #`CLOCK $stop;
     end
 
-    task check_output(input [`DATA_WIDTH*2-1:0] result, input [`DATA_WIDTH*2-1:0] golden);
+    task check_output(input [`DATA_WIDTH-1:0] result, input [`DATA_WIDTH-1:0] golden);
     begin
         if (result!=golden) begin
             $display("Output is %0d which should be %0d instead!", result, golden);
@@ -53,9 +53,11 @@ module relu_cell_simulator();
     wire [`DATA_WIDTH-1:0] output_value;
     wire output_enable;  
 
-    relu_cell #(
+    scaler #(
         .DATA_WIDTH(`DATA_WIDTH), 
         .RESULT_WIDTH(`DATA_WIDTH*2),
+        .SCALING_FACTOR(10),
+        .SHIFT_AMOUNT(1),
         .CELL_AMOUNT(2)
     ) uut (
         .clk(clk), 
@@ -77,37 +79,32 @@ module relu_cell_simulator();
     initial begin
         #2;
         #(`CLOCK*2); 
-        input_result = 1;
+        input_result = {1'b0, 16'd1};
         #`CLOCK; 
         check_output(output_value, 0);
         check_output(output_index, 0);
         check_enable(output_enable, 0); 
-        input_result[`DATA_WIDTH*2-1:0] = 1;
-        input_result[`DATA_WIDTH*2] = 1;
+        input_result = {1'b1, 16'd1};
         #`CLOCK; 
-        check_output(output_value, 1);
+        check_output(output_value, 5);
         check_output(output_index, 0);
         check_enable(output_enable, 1);
-        input_result[`DATA_WIDTH*2-1:0] = -1;
-        input_result[`DATA_WIDTH*2] = 1;
+        input_result = {1'b1, 16'd5};
         #`CLOCK; 
-        check_output(output_value, 0);
+        check_output(output_value, 25);
         check_output(output_index, 1);
         check_enable(output_enable, 1);
-        input_result[`DATA_WIDTH*2-1:0] = -20;
-        input_result[`DATA_WIDTH*2] = 1;
+        input_result = {1'b1, 16'd0};
         #`CLOCK; 
         check_output(output_value, 0);
         check_output(output_index, 0);
         check_enable(output_enable, 1);
-        input_result[`DATA_WIDTH*2-1:0] = 15;
-        input_result[`DATA_WIDTH*2] = 1;
+        input_result = {1'b1, 16'd3};
         #`CLOCK;
         check_output(output_value, 15);
         check_output(output_index, 1);
         check_enable(output_enable, 1);
-        input_result[`DATA_WIDTH*2-1:0] = 15;
-        input_result[`DATA_WIDTH*2] = 0;
+        input_result = {1'b0, 16'd60};
         #`CLOCK;
         check_output(output_value, 0);
         check_output(output_index, 0);
