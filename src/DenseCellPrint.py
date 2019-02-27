@@ -1,4 +1,4 @@
-class WeightCellPrinter:
+class DenseCellPrinter:
 
   def printWires(self, output_wire_names, output_file):
     output_file.write("wire [`DATA_WIDTH-1:0] {};\n".format(output_wire_names[0]))
