@@ -34,3 +34,15 @@ class TopologyFinder:
         for leafNodeIndex in range (0, len(arrayOfInputLayers)):
             print ("Input", leafNodeIndex)
             TopologyFinder.printLayers(arrayOfInputLayers[leafNodeIndex])
+            
+    def assertSuitableTopology(arrayOfInputLayers):
+        if(len(arrayOfInputLayers)!=1):
+            raise Exception("Please submit a model which only has one input")
+        else:
+            TopologyFinder.assertOneOutputAndInput(arrayOfInputLayers[0])
+            
+    def assertOneOutputAndInput(childNode):
+        if len(childNode.parents) > 1:
+            raise Exception("Please submit a sequential model")
+        elif len(childNode.parents) == 1:
+            TopologyFinder.assertOneOutputAndInput(childNode.parents[0])

@@ -3,7 +3,7 @@ from tensorflow import keras
 import numpy as np
 
 class Quantizer:
-    def __init__(self, min_qunatized_value, max_quantized_value):
+    def __init__(self, keras_model, test_data, min_qunatized_value, max_quantized_value, scale_width):
         self.qmin = min_qunatized_value
         self.qmax = max_quantized_value
         
@@ -22,6 +22,33 @@ class Quantizer:
         self.combined_scales = []
         self.shift_amounts = [] 
         
+        self.layer_ids = {}
+        self.keras_model = keras_model
+        
+        self.initialiseQuantizationData(keras_model, test_data, scale_width)
+        self.giveLayersIdsAssumingSequentialModel(keras_model)  
+        
+    def initialiseQuantizationData(self, keras_model, test_data, scale_width):
+        self.findLayerInputAndOutputRanges(keras_model, test_data)
+        self.findLayerInputAndOutputScales()    
+        
+        self.findLayerWeightRanges(keras_model)
+        self.findLayerWeightScales()
+            
+        self.findFinalScalingConstant(keras_model, scale_width)
+     
+    def giveLayersIdsAssumingSequentialModel(self, keras_model):
+        for layer_index in range(len(keras_model.layers)):
+            self.layer_ids[keras_model.layers[layer_index]] = layer_index
+            
+    def quantizeModelWeights(self):
+        for layer_index in range(len(self.keras_model.layers)):
+            weights = self.keras_model.layers[layer_index].get_weights()
+            self.keras_model.layers[layer_index].set_weights(
+                self.quantizeMatrix(weights, 
+                                    self.quantized_weight_scales[layer_index], 
+                                    self.quantized_weight_zeros[layer_index]))
+     
     def quantizeMatrix(self, original_values, scale, zero_point):
         transformed_val = zero_point + original_values / scale
         clamped_val = np.maximum(self.qmin, np.minimum(self.qmax, transformed_val))
@@ -93,7 +120,7 @@ class Quantizer:
             quantized_scale, shift_amount = self.getFinalScale(real_multiplier, scaler_width)
             
             self.combined_scales.append(quantized_scale)
-            self.shift_amounts.append(shift_amount)
+            self.shift_amounts.append(shift_amount + scaler_width)
     
     def findScaleAndZeroPointForGivenData(self, max_values, min_values, scales_array, zeros_array):
         for layer_index in range(len(max_values)):

@@ -2,30 +2,57 @@ import tensorflow as tf
 from tensorflow import keras
 
 from DenseCellPrint import DenseCellPrinter
+from DenseScalerPrint import DenseScalerPrinter
+from ArgmaxCellPrint import ArgmaxCellPrinter
 
 class ModelHandler:
-    def createVerilogForAllLayers(childNode, verilogPrinter, inputWires, layerIndex):
+    def createVerilogForAllLayers(childNode, verilogPrinter, quantizer, inputWires):
         for parent in childNode.parents:
             if parent.value != None:
-                outputWires = ModelHandler.createVerilogForGivenLayer(layerIndex, parent.value, verilogPrinter, inputWires)
-                ModelHandler.createVerilogForAllLayers(parent, verilogPrinter, outputWires, layerIndex + 1)
+                outputWires = ModelHandler.createVerilogForGivenLayer(parent.value, verilogPrinter,
+                                                                      quantizer, inputWires)
+                ModelHandler.createVerilogForAllLayers(parent, verilogPrinter, quantizer, outputWires)
 
-    def denseLayerHandler(layerIndex, layer, outputFile, inputWires):
+    def denseLayerHandler(layer, outputFile, quantizer, inputWires):
         layerConfig = layer.get_config()
         weightCellPrinter = DenseCellPrinter()
-        outputWires = weightCellPrinter.printCells(layer.get_weights()[0], layerIndex, layerConfig["units"],
-                                                   inputWires, outputFile)
+        scalerPrinter = DenseScalerPrinter()
+        inputWires.insert(2,"ground")
+        
+        outputWires = weightCellPrinter.printCells(layer.get_weights()[0], quantizer.layer_ids[layer], quantizer,
+                                                   layerConfig["units"], inputWires, outputFile)
         if (layerConfig["use_bias"]):
-            outputFile.write("// Processing element for bias addition with biases layer.get_weights()[1]\n")
-        outputFile.write("// Processing element for activation function " + layerConfig["activation"] + "\n")
-        outputFile.write("\n")
+            raise Exception("Please submit a model which doesn't use biases")
+            
+        outputWires = scalerPrinter.printScaler(quantizer.layer_ids[layer], quantizer, layerConfig["units"], 
+                                                outputWires, outputFile)
+        
+        outputWires = ModelHandler.createVerilogForActivationFunction(layerConfig["activation"], outputFile, 
+                                                                      quantizer, layerConfig["units"], outputWires)
         return outputWires 
 
-    def defaultHandler(layerIndex, layer, outputFile, inputWires):
-        outputFile.write("// Some processing elements for " + layer.__class__.__name__ + " layer\n")
-        outputFile.write("\n")
-        return inputWires
+    def defaultLayerHandler(layer, outputFile, quantizer, inputWires):
+        raise Exception("Please submit a model which uses the supported Dense layer")
 
-    def createVerilogForGivenLayer(layerIndex, layer, verilogPrinter, inputWires):
+    def createVerilogForGivenLayer(layer, verilogPrinter, quantizer, inputWires):
         layerHandlers = {keras.layers.Dense(1).__class__.__name__ : ModelHandler.denseLayerHandler}
-        return layerHandlers.get(layer.__class__.__name__, ModelHandler.defaultHandler)(layerIndex, layer, verilogPrinter.output_file, inputWires)
+        return layerHandlers.get(layer.__class__.__name__, 
+                                 ModelHandler.defaultLayerHandler)(layer,verilogPrinter.output_file,
+                                                                   quantizer, inputWires)
+    
+    def linearFunctionHandler(output_file, quantizer, cell_amount, inputWires):
+        return inputWires
+        
+    def softmaxFunctionHandler(output_file, quantizer, cell_amount, inputWires):
+        argmaxCellPrinter = ArgmaxCellPrinter()
+        return argmaxCellPrinter.printArgmax(cell_amount, inputWires, output_file)
+    
+    def defaultFunctionHandler(output_file, quantizer, cell_amount, inputWires):
+        raise Exception("Please submit a model which uses the supported activation functions")
+    
+    def createVerilogForActivationFunction(activation_function, output_file, quantizer, cell_amount, inputWires):
+        activationFunctionHandlers = {"linear": ModelHandler.linearFunctionHandler,
+                                      "softmax": ModelHandler.softmaxFunctionHandler}
+        return activationFunctionHandlers.get(activation_function, 
+                                              ModelHandler.defaultFunctionHandler)(output_file, quantizer,
+                                                                                   cell_amount, inputWires)
