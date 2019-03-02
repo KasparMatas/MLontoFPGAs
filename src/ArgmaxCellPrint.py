@@ -4,13 +4,13 @@ class ArgmaxCellPrinter:
         output_file.write("wire [`DATA_WIDTH-1:0] output_result;\n")
     
     def printInitialParameters(self, data_width, weight_amount, output_file):
-        output_file.write("scaler #(\n")
+        output_file.write("argmax_cell  #(\n")
         output_file.write("    .DATA_WIDTH({}),\n".format(data_width))
         output_file.write("    .RESULT_WIDTH({}*2+2),\n".format(data_width))
         output_file.write("    .CELL_AMOUNT({}),\n".format(weight_amount))
         
     def printInstanceName(self, output_file):
-        output_file.write(") argmax_cell (\n")    
+        output_file.write(") result_cell (\n")    
     
     def printInputsOutputs(self, input_wire_names, output_file):
         output_file.write("    .clk(clk),\n")
