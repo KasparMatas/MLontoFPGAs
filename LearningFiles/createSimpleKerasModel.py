@@ -1,6 +1,8 @@
 # TensorFlow and tf.keras
 import tensorflow as tf
 from tensorflow import keras
+
+import numpy as np
 	
 mnist_dataset = keras.datasets.mnist
 (train_images, train_labels), (test_images, test_labels) = mnist_dataset.load_data()
@@ -26,3 +28,5 @@ model.save("simple_keras_model.h5")
 
 #test_loss, test_acc = model.evaluate(test_images, test_labels, batch_size=32)
 #print("Test accuracy:", test_acc)
+
+np.savetxt("test_data", test_images[0:1000])
