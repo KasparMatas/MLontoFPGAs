@@ -23,10 +23,11 @@
 module argmax_cell#(
         parameter DATA_WIDTH = 8,
         parameter RESULT_WIDTH = 16,
+        parameter INDEX_WIDTH = 10,
         parameter CELL_AMOUNT = 4
     ) (
         input wire clk,
-        input wire [DATA_WIDTH-1:0] input_index,
+        input wire [INDEX_WIDTH-1:0] input_index,
         input wire [DATA_WIDTH-1:0] input_value,
         input wire input_enable,
         output reg [RESULT_WIDTH:0] output_result

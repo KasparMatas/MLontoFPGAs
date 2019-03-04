@@ -38,16 +38,15 @@ module scaler_integration_simulator();
     endtask
     
     reg clk;
-    reg [`DATA_WIDTH-1:0] input_index;
+    reg [`DATA_WIDTH+1:0] input_index;
     reg [`DATA_WIDTH-1:0] input_value;
     reg input_enable;
-    wire [`DATA_WIDTH*2+4:0] output_result;
     
     // One layer with 4 cells and a scaler
     
     wire [`DATA_WIDTH*2+4:0] input_result;
     
-    wire [`DATA_WIDTH-1:0] index_1_2;
+    wire [`DATA_WIDTH+1:0] index_1_2;
     wire [`DATA_WIDTH-1:0] value_1_2;
     wire [`DATA_WIDTH*2+4:0] result_1_2;
     wire enable_1_2;  
@@ -69,7 +68,7 @@ module scaler_integration_simulator();
         .output_enable(enable_1_2)
     );  
     
-    wire [`DATA_WIDTH-1:0] index_2_3;
+    wire [`DATA_WIDTH+1:0] index_2_3;
     wire [`DATA_WIDTH-1:0] value_2_3;
     wire [`DATA_WIDTH*2+4:0] result_2_3;
     wire enable_2_3; 
@@ -91,7 +90,7 @@ module scaler_integration_simulator();
         .output_enable(enable_2_3)
     );
     
-    wire [`DATA_WIDTH-1:0] index_3_4;
+    wire [`DATA_WIDTH+1:0] index_3_4;
     wire [`DATA_WIDTH-1:0] value_3_4;
     wire [`DATA_WIDTH*2+4:0] result_3_4;
     wire enable_3_4; 
@@ -113,7 +112,7 @@ module scaler_integration_simulator();
         .output_enable(enable_3_4)
     );
     
-    wire [`DATA_WIDTH-1:0] output_index_1;
+    wire [`DATA_WIDTH+1:0] output_index_1;
     wire [`DATA_WIDTH-1:0] output_value_1;
     wire [`DATA_WIDTH*2+4:0] output_result_1;
     wire output_enable_1;
@@ -135,7 +134,7 @@ module scaler_integration_simulator();
         .output_enable(output_enable_1)
     );       
     
-    wire [`DATA_WIDTH-1:0] input_index_2;
+    wire [`DATA_WIDTH+1:0] input_index_2;
     wire [`DATA_WIDTH-1:0] input_value_2;
     wire input_enable_2;
     

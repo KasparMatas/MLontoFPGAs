@@ -23,16 +23,17 @@
 module relu_cell#(
         parameter DATA_WIDTH = 8,
         parameter RESULT_WIDTH = 16,
+        parameter INDEX_WIDTH = 10,
         parameter CELL_AMOUNT = 4
     ) (
         input wire clk,
         input wire [RESULT_WIDTH:0] input_result,
-        output reg [DATA_WIDTH-1:0] output_index,
+        output reg [INDEX_WIDTH-1:0] output_index,
         output reg [DATA_WIDTH-1:0] output_value,
         output reg output_enable
     );
     
-reg [DATA_WIDTH-1:0] index;
+reg [INDEX_WIDTH-1:0] index;
     
 initial begin
     index = 0;

@@ -41,11 +41,11 @@ module universal_weight_comp_cell_simulator();
     endtask
 
     reg clk;
-    reg [`DATA_WIDTH-1:0] input_index;
+    reg [`DATA_WIDTH+1:0] input_index;
     reg [4*`DATA_WIDTH-1:0] input_value;
     reg [`DATA_WIDTH*2:0] input_result;
     reg input_enable;
-    wire [`DATA_WIDTH-1:0] output_index;
+    wire [`DATA_WIDTH+1:0] output_index;
     wire [4*`DATA_WIDTH-1:0] output_value;
     wire [`DATA_WIDTH*2:0] output_result;
     wire output_enable;  
@@ -53,6 +53,7 @@ module universal_weight_comp_cell_simulator();
     universal_weight_comp_cell #(
         .DATA_WIDTH(`DATA_WIDTH), 
         .RESULT_WIDTH(`DATA_WIDTH*2),
+        .INDEX_WIDTH(`DATA_WIDTH+2),
         .WEIGHT_AMOUNT(8), 
         .WEIGHTS({8'd1, 8'd1, 8'd1, 8'd1, 8'd1, 8'd1, 8'd1, 8'd1}),
         .INPUT_AMOUNT(4)

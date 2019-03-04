@@ -22,16 +22,19 @@
 module universal_weight_comp_cell #(
         parameter DATA_WIDTH = 8,
         parameter RESULT_WIDTH = 16,
+        parameter INDEX_WIDTH = 10,
         parameter WEIGHT_AMOUNT = 4,
         parameter [8*WEIGHT_AMOUNT-1:0] WEIGHTS = {8'd0, 8'd0, 8'd0, 8'd0},
+        parameter WEIGHT_OFFSET = 0, // Not implemented yet
+        parameter INPUT_OFFSET = 0, // Not implemented yet
         parameter INPUT_AMOUNT = 4
     ) (
         input wire clk,
-        input wire [DATA_WIDTH-1:0] input_index,
+        input wire [INDEX_WIDTH-1:0] input_index,
         input wire [INPUT_AMOUNT*DATA_WIDTH-1:0] input_value,
         input wire [RESULT_WIDTH:0] input_result,
         input wire input_enable,
-        output reg [DATA_WIDTH-1:0] output_index,
+        output reg [INDEX_WIDTH-1:0] output_index,
         output reg [INPUT_AMOUNT*DATA_WIDTH-1:0] output_value,
         output reg [RESULT_WIDTH:0] output_result,
         output reg output_enable

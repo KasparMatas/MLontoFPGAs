@@ -39,7 +39,7 @@ module argmax_simulator();
     endtask
 
     reg clk;
-    reg [`DATA_WIDTH-1:0] input_index;
+    reg [`DATA_WIDTH+1:0] input_index;
     reg [`DATA_WIDTH-1:0] input_value;
     reg input_enable;
     wire [`DATA_WIDTH*2:0] output_result;
@@ -47,6 +47,7 @@ module argmax_simulator();
     argmax_cell #(
         .DATA_WIDTH(`DATA_WIDTH),
         .RESULT_WIDTH(`DATA_WIDTH*2),
+        .INDEX_WIDTH(`DATA_WIDTH+2),
         .CELL_AMOUNT(2)
     ) uut (
         .clk(clk), 
