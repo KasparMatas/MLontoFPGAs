@@ -1,6 +1,7 @@
 import tensorflow as tf
 from tensorflow import keras
 import numpy as np
+import math
 
 from DenseCellPrint import DenseCellPrinter
 from DenseScalerPrint import DenseScalerPrinter
@@ -19,19 +20,21 @@ class ModelHandler:
         weightCellPrinter = DenseCellPrinter()
         scalerPrinter = DenseScalerPrinter()
         inputWires.insert(2,"ground")
-        
         weights = np.transpose(layer.get_weights()[0])
+        wireWidths = [math.ceil(math.log(weights.shape[1],2)), "`DATA_WIDTH", "`DATA_WIDTH*4"]
         
-        outputWires = weightCellPrinter.printCells(weights, quantizer.layer_ids[layer],
-                                                   quantizer, weights.shape[0], inputWires, outputFile)
+        outputWires = weightCellPrinter.printCells(weights, quantizer.layer_ids[layer], quantizer, 
+                                                   weights.shape[0], wireWidths, inputWires, outputFile)
         if (layerConfig["use_bias"]):
             raise Exception("Please submit a model which doesn't use biases")
             
-        outputWires = scalerPrinter.printScaler(quantizer.layer_ids[layer], quantizer, weights.shape[0], 
+        wireWidths[0] = math.ceil(math.log(weights.shape[0],2))
+        outputWires = scalerPrinter.printScaler(quantizer.layer_ids[layer], quantizer, weights.shape[0], wireWidths, 
                                                 outputWires, outputFile)
         
         outputWires = ModelHandler.createVerilogForActivationFunction(layerConfig["activation"], outputFile, 
-                                                                      quantizer, weights.shape[0], outputWires)
+                                                                      quantizer, weights.shape[0], wireWidths,
+                                                                      outputWires)
         return outputWires 
 
     def defaultLayerHandler(layer, outputFile, quantizer, inputWires):
@@ -43,19 +46,21 @@ class ModelHandler:
                                  ModelHandler.defaultLayerHandler)(layer,verilogPrinter.output_file,
                                                                    quantizer, inputWires)
     
-    def linearFunctionHandler(output_file, quantizer, cell_amount, inputWires):
+    def linearFunctionHandler(output_file, quantizer, cell_amount, wireWidths, inputWires):
         return inputWires
         
-    def softmaxFunctionHandler(output_file, quantizer, cell_amount, inputWires):
+    def softmaxFunctionHandler(output_file, quantizer, cell_amount, wireWidths, inputWires):
         argmaxCellPrinter = ArgmaxCellPrinter()
-        return argmaxCellPrinter.printArgmax(cell_amount, inputWires, output_file)
+        return argmaxCellPrinter.printArgmax(cell_amount, wireWidths, inputWires, output_file)
     
-    def defaultFunctionHandler(output_file, quantizer, cell_amount, inputWires):
+    def defaultFunctionHandler(output_file, quantizer, cell_amount, wireWidths, inputWires):
         raise Exception("Please submit a model which uses the supported activation functions")
     
-    def createVerilogForActivationFunction(activation_function, output_file, quantizer, cell_amount, inputWires):
+    def createVerilogForActivationFunction(activation_function, output_file, quantizer, cell_amount, wireWidths,
+                                           inputWires):
         activationFunctionHandlers = {"linear": ModelHandler.linearFunctionHandler,
                                       "softmax": ModelHandler.softmaxFunctionHandler}
         return activationFunctionHandlers.get(activation_function, 
                                               ModelHandler.defaultFunctionHandler)(output_file, quantizer,
-                                                                                   cell_amount, inputWires)
+                                                                                   cell_amount, wireWidths, 
+                                                                                   inputWires)
