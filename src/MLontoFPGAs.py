@@ -9,8 +9,6 @@ from VerilogPrinter import VerilogPrinter
 from ModelHandler import ModelHandler
 from Quantizer import Quantizer
 
-from customDense import CustomDense
-
 # Assert correct input argument amount.
 if (len(sys.argv)!=3):
     raise Exception("Wrong amount of inputs given. Please specify the name of the model file and the name of the data file.")

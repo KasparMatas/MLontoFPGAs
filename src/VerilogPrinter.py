@@ -14,5 +14,5 @@ class VerilogPrinter:
         self.output_file.write("wire {};".format(output_wire_names[3]))
         
     def printGroundSignal(self):
-        self.output_file.write("wire [``DATA_WIDTH*2+2:0] ground;\n")
+        self.output_file.write("wire [`DATA_WIDTH*2+2:0] ground;\n")
         self.output_file.write("assign ground = 0;\n")

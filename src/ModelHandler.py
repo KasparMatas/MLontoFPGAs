@@ -1,5 +1,6 @@
 import tensorflow as tf
 from tensorflow import keras
+import numpy as np
 
 from DenseCellPrint import DenseCellPrinter
 from DenseScalerPrint import DenseScalerPrinter
@@ -19,16 +20,18 @@ class ModelHandler:
         scalerPrinter = DenseScalerPrinter()
         inputWires.insert(2,"ground")
         
-        outputWires = weightCellPrinter.printCells(layer.get_weights()[0], quantizer.layer_ids[layer], quantizer,
-                                                   layerConfig["units"], inputWires, outputFile)
+        weights = np.transpose(layer.get_weights()[0])
+        
+        outputWires = weightCellPrinter.printCells(weights, quantizer.layer_ids[layer],
+                                                   quantizer, weights.shape[0], inputWires, outputFile)
         if (layerConfig["use_bias"]):
             raise Exception("Please submit a model which doesn't use biases")
             
-        outputWires = scalerPrinter.printScaler(quantizer.layer_ids[layer], quantizer, layerConfig["units"], 
+        outputWires = scalerPrinter.printScaler(quantizer.layer_ids[layer], quantizer, weights.shape[0], 
                                                 outputWires, outputFile)
         
         outputWires = ModelHandler.createVerilogForActivationFunction(layerConfig["activation"], outputFile, 
-                                                                      quantizer, layerConfig["units"], outputWires)
+                                                                      quantizer, weights.shape[0], outputWires)
         return outputWires 
 
     def defaultLayerHandler(layer, outputFile, quantizer, inputWires):

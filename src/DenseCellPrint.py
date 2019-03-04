@@ -21,7 +21,7 @@ class DenseCellPrinter:
     for weight in weights:
       weightString += "8'd{}, ".format(int(weight))
     weightString = weightString[:-2]
-    return weightString
+    return "{" + weightString + "}"
   
   def printWeights(self, weights, output_file):
     output_file.write("    .WEIGHTS({})\n".format(self.formatWeights(weights)))
