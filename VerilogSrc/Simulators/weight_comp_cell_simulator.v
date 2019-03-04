@@ -39,11 +39,11 @@ module weight_comp_cell_simulator();
     endtask
 
     reg clk;
-    reg [`DATA_WIDTH-1:0] input_index;
+    reg [`DATA_WIDTH+1:0] input_index;
     reg [`DATA_WIDTH-1:0] input_value;
     reg [`DATA_WIDTH*2:0] input_result;
     reg input_enable;
-    wire [`DATA_WIDTH-1:0] output_index;
+    wire [`DATA_WIDTH+1:0] output_index;
     wire [`DATA_WIDTH-1:0] output_value;
     wire [`DATA_WIDTH*2:0] output_result;
     wire output_enable;  
@@ -51,7 +51,10 @@ module weight_comp_cell_simulator();
     weight_comp_cell #(
         .DATA_WIDTH(`DATA_WIDTH), 
         .RESULT_WIDTH(`DATA_WIDTH*2), 
+        .INDEX_WIDTH(`DATA_WIDTH+2),
         .WEIGHT_AMOUNT(2), 
+        .WEIGHT_OFFSET(1),
+        .INPUT_OFFSET(2),
         .WEIGHTS({8'd4, 8'd1})
     ) uut (
         .clk(clk), 
@@ -84,16 +87,16 @@ initial begin
     #(`CLOCK); 
     check_output(output_result, {1'b0, 32'd0});
     input_index = 1;
-    input_value = 3'd2;
+    input_value = 3'd4;
     #(`CLOCK); 
-    check_output(output_result, {1'b1, 32'd8});
+    check_output(output_result, {1'b1, 32'd6});
     input_index = 0;   
-    input_value = 3'd3;
+    input_value = 3'd5;
     input_result = {1'b1, 32'd6};
     #(`CLOCK); 
     check_output(output_result, {1'b1, 32'd6});
     input_index = 1;   
-    input_value = 3'd4;
+    input_value = 3'd6;
     input_result = {1'b1, 32'd55};
     #(`CLOCK); 
     check_output(output_result, {1'b1, 32'd55});
@@ -103,7 +106,7 @@ initial begin
     input_result = {1'b0, 32'd100};
     check_output(output_result, {1'b1, 32'd45});
     #(`CLOCK); 
-    check_output(output_result, {1'b1, 32'd19});
+    check_output(output_result, {1'b1, 32'd12});
     #(`CLOCK*2);
     $display("SUCCESSFUL TEST!"); 
     $stop;

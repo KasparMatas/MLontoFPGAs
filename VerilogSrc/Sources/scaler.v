@@ -23,18 +23,20 @@
 module scaler#(
         parameter DATA_WIDTH = 8,
         parameter RESULT_WIDTH = 16,
+        parameter INDEX_WIDTH = 10,
         parameter SCALING_FACTOR = 19661,
         parameter SHIFT_AMOUNT = 15,
+        parameter OUTPUT_OFFSET = 0,
         parameter CELL_AMOUNT = 4
     ) (
         input wire clk,
         input wire [RESULT_WIDTH:0] input_result,
-        output reg [DATA_WIDTH-1:0] output_index,
+        output reg [INDEX_WIDTH-1:0] output_index,
         output reg [DATA_WIDTH-1:0] output_value,
         output reg output_enable
     );
     
-reg [DATA_WIDTH-1:0] index;
+reg [INDEX_WIDTH-1:0] index;
 wire [RESULT_WIDTH*2-1:0] accumulator;
     
 initial begin
@@ -46,7 +48,7 @@ assign accumulator = input_result[RESULT_WIDTH-1:0] * SCALING_FACTOR;
 always @ (posedge clk) begin #1
     if (input_result[RESULT_WIDTH]) begin
 
-        output_value <= accumulator[RESULT_WIDTH*2-1:SHIFT_AMOUNT];
+        output_value <= accumulator[RESULT_WIDTH*2-1:SHIFT_AMOUNT] + OUTPUT_OFFSET;
         //output_value <= input_result[RESULT_WIDTH-1:0] * SCALING_FACTOR >> SHIFT_AMOUNT;
 
         if (index == CELL_AMOUNT) begin

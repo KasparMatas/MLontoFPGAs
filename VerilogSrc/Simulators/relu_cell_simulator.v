@@ -49,13 +49,14 @@ module relu_cell_simulator();
     
     reg clk;
     reg [`DATA_WIDTH*2:0] input_result;
-    wire [`DATA_WIDTH-1:0] output_index;
+    wire [`DATA_WIDTH+1:0] output_index;
     wire [`DATA_WIDTH-1:0] output_value;
     wire output_enable;  
 
     relu_cell #(
         .DATA_WIDTH(`DATA_WIDTH), 
         .RESULT_WIDTH(`DATA_WIDTH*2),
+        .INDEX_WIDTH(`DATA_WIDTH+2),
         .CELL_AMOUNT(2)
     ) uut (
         .clk(clk), 
