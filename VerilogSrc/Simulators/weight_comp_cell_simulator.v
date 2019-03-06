@@ -53,7 +53,7 @@ module weight_comp_cell_simulator();
         .RESULT_WIDTH(`DATA_WIDTH*2), 
         .INDEX_WIDTH(`DATA_WIDTH+2),
         .WEIGHT_AMOUNT(2), 
-        .WEIGHT_OFFSET(1),
+        .WEIGHT_OFFSET(3),
         .INPUT_OFFSET(2),
         .WEIGHTS({8'd4, 8'd1})
     ) uut (
@@ -106,7 +106,7 @@ initial begin
     input_result = {1'b0, 32'd100};
     check_output(output_result, {1'b1, 32'd45});
     #(`CLOCK); 
-    check_output(output_result, {1'b1, 32'd12});
+    check_output(output_result, {1'b1, 32'hFFFFFFFE});
     #(`CLOCK*2);
     $display("SUCCESSFUL TEST!"); 
     $stop;

@@ -232,7 +232,7 @@ module scaler_integration_simulator();
                 output_1_values_checked <= output_1_values_checked + 1; 
                 #(`CLOCK*2);
                 $display("SUCCESSFUL TEST!"); 
-                $stop;  
+                $stop;
             end
         end    
     end

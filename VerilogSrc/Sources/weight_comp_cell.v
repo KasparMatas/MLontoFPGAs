@@ -40,11 +40,17 @@ module weight_comp_cell #(
         output reg output_enable
     );
     
-reg [RESULT_WIDTH-1:0] accumulator;
+reg signed [RESULT_WIDTH-1:0] accumulator;
 reg [RESULT_WIDTH:0] result;
-wire [RESULT_WIDTH-1:0] next_add;
+wire signed [RESULT_WIDTH-1:0] next_add;
+wire signed [RESULT_WIDTH-1:0] next_input;
+wire signed [RESULT_WIDTH-1:0] next_rweight;
+wire signed [RESULT_WIDTH-1:0] next_qweight;
 
 assign next_add = (input_value - INPUT_OFFSET) * (WEIGHTS[8*input_index +: 8] - WEIGHT_OFFSET);
+assign next_input = (input_value - INPUT_OFFSET);
+assign next_rweight = (WEIGHTS[8*input_index +: 8] - WEIGHT_OFFSET);
+assign next_qweight = WEIGHTS[8*input_index +: 8];
 
 initial begin 
     result = 0; 

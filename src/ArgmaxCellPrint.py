@@ -1,7 +1,7 @@
 class ArgmaxCellPrinter:
     
     def printWires(self, output_file):
-        output_file.write("wire [`DATA_WIDTH-1:0] output_result;\n")
+        output_file.write("wire [`DATA_WIDTH*4:0] output_result;\n")
     
     def printInitialParameters(self, wire_widths, weight_amount, output_file):
         output_file.write("argmax_cell  #(\n")

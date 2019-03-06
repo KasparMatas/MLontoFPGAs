@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-`define DATA_WIDTH 8
+`define DATA_WIDTH 16
 `define CLOCK 20 
 //////////////////////////////////////////////////////////////////////////////////
 // Company: 
@@ -57,9 +57,9 @@ module scaler_simulator();
         .DATA_WIDTH(`DATA_WIDTH), 
         .RESULT_WIDTH(`DATA_WIDTH*2),
         .INDEX_WIDTH(`DATA_WIDTH+2),
-        .SCALING_FACTOR(10),
-        .SHIFT_AMOUNT(1),
-        .OUTPUT_OFFSET(10),
+        .SCALING_FACTOR(19311),
+        .SHIFT_AMOUNT(27),
+        .OUTPUT_OFFSET(121),
         .CELL_AMOUNT(2)
     ) uut (
         .clk(clk), 
@@ -81,14 +81,14 @@ module scaler_simulator();
     initial begin
         #2;
         #(`CLOCK*2); 
-        input_result = {1'b0, 16'd1};
+        input_result = {1'b1, 32'd28841};
         #`CLOCK; 
         check_output(output_value, 0);
         check_output(output_index, 0);
         check_enable(output_enable, 0); 
-        input_result = {1'b1, 16'd1};
+        input_result = {1'b1, 16'hFFFF};
         #`CLOCK; 
-        check_output(output_value, 15);
+        check_output(output_value, 5);
         check_output(output_index, 0);
         check_enable(output_enable, 1);
         input_result = {1'b1, 16'd5};
