@@ -1,3 +1,5 @@
+import numpy as np
+
 class DenseCellPrinter:
 
   def printWires(self, wire_widths, output_wire_names, output_file):
@@ -19,7 +21,7 @@ class DenseCellPrinter:
   
   def formatWeights(self, weights):
     weightString = ""
-    for weight in weights:
+    for weight in np.flip(weights):
       weightString += "8'd{}, ".format(int(weight))
     weightString = weightString[:-2]
     return "{" + weightString + "}"
