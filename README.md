@@ -10,4 +10,6 @@ MLontoFPGAs is a tool which generates Verilog files based on the given TensorFlo
 ## How to run
 Install tensorflow like shown here: https://www.tensorflow.org/install/
 
-After that you save your model into the file named "keras_model.h5" next to the MLontoFPGAs.py file and run it. That should generate a tensorFlowModel.v file which can be synthesised and then uploaded onto a FPGA board. 
+When you have tensorflow and python installed on your system then you can call MLontoFPGAs.py with to arguments. The first argument is the path to the the keras .h5 file containing the model. Second argument is the path to the np data containing some data to run the given model with. That is to get the ranges of the data going through the model to quantize it according to the following scheme: https://github.com/google/gemmlowp/blob/master/doc/quantization.md?fbclid=IwAR2IzbxUEsPds_RRJSWhPDZOJO3ALB_Q6t2vhranP65ZYGptZCFf9HJJxbA#implementation-of-quantized-matrix-multiplication
+
+Currently models with no biases or activation functions consisting only of Dense layers are supported. Lastly the models need to be decreasing in a sense that the layer i needs to have more units than i+1.

@@ -1,3 +1,6 @@
+# Main script of the project which takes a model and some data and then maps
+# that model to Verilog code.
+
 import sys
 import tensorflow as tf
 from tensorflow import keras
