@@ -1,5 +1,6 @@
 # Data structure for storing the layers
 class TreeNode:
+    # Constructor
     def __init__(self, value):
         self.value = value
         self.children = []
