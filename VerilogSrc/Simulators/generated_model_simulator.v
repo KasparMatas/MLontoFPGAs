@@ -33,7 +33,7 @@ task check_output(input [`DATA_WIDTH*4-1:0] result, input [`DATA_WIDTH*4-1:0] go
 begin
     if (result!=golden) begin
         $display("Output is %0d which should be %0d instead!", result, golden);
-        //->error;
+        ->error;
     end
 end
 endtask
@@ -3041,46 +3041,6 @@ reg [3:0] output_results_checked;
 initial begin
     output_results_checked = 0;
 end
-
-//always @ (posedge clk) begin
-//    if (result_0_99_100[`DATA_WIDTH*4]!=0) begin
-//        #1
-//        check_output(result_0_99_100[`DATA_WIDTH*4-1:0], 66019);
-//        $stop;
-//    end
-//end 
-
-//always @ (posedge clk) begin
-//    if (scale_enable_1!=0) begin
-//        #1
-//        check_output(scale_value_1, 81);
-//        #(`CLOCK)
-//        check_output(scale_value_1, 192);
-//        #(`CLOCK)
-//        check_output(scale_value_1, 59);
-//        #(`CLOCK)
-//        check_output(scale_value_1, 144);
-//        #(`CLOCK)
-//        check_output(scale_value_1, 125);
-//        $stop;
-//    end
-//end
-
-//always @ (posedge clk) begin
-//    if (scale_enable_2!=0) begin
-//        #1
-//        check_output(scale_value_2, 4148);
-//        #(`CLOCK)
-//        check_output(scale_value_2, -2306);
-//        #(`CLOCK)
-//        check_output(scale_value_2, 1776);
-//        #(`CLOCK)
-//        check_output(scale_value_2, 1334);
-//        #(`CLOCK)
-//        check_output(scale_value_2, -414);
-//        $stop;
-//    end
-//end
     
 always @ (posedge clk) begin #2
     if (pixels_fed!=file_lines_read) begin
