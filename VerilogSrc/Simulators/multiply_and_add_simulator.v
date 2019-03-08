@@ -30,7 +30,7 @@ module multiply_and_add_simulator();
         #100 $stop;
     end
 
-    task check_output(input [`DATA_WIDTH*2:0] result, input [`DATA_WIDTH*2:0] golden);
+    task check_output(input [`DATA_WIDTH*2-1:0] result, input [`DATA_WIDTH*2-1:0] golden);
     begin
         if (result!==golden) begin
             $display("Output is %0d which should be %0d instead!", result[`DATA_WIDTH*2-1:0], golden[`DATA_WIDTH*2-1:0]);
@@ -80,6 +80,12 @@ module multiply_and_add_simulator();
         weight_value = 8'd2;
         #10;
         check_output(output_value, 16'd20);
+        #100;
+        add_value = 16'd10;
+        input_value = 8'd255;
+        weight_value = 8'd6;
+        #10;
+        check_output(output_value, 16'd4);
         $display("SUCCESSFUL TEST!"); 
         $stop;
     end

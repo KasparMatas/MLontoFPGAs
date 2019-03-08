@@ -2,14 +2,13 @@ import sys
 import tensorflow as tf
 from tensorflow import keras
 import numpy as np
+import math
 
 from TreeNode import TreeNode
 from TopologyFinder import TopologyFinder
 from VerilogPrinter import VerilogPrinter
 from ModelHandler import ModelHandler
 from Quantizer import Quantizer
-
-from customDense import CustomDense
 
 # Assert correct input argument amount.
 if (len(sys.argv)!=3):
@@ -39,8 +38,9 @@ quantizer.quantizeModelWeights()
 verilogPrinter = VerilogPrinter(open("tensorFlowModel.v","w"))
 verilogPrinter.defineClkAndDataWidth(8)
 verilogPrinter.printGroundSignal()
-inputWires = ["input_index", "input_value", "input_result", "input_enable"]
-verilogPrinter.printInputWires(inputWires)
+inputWires = ["input_index", "input_value", "input_enable"]
+verilogPrinter.printInputWires([math.ceil(math.log(inputLayers[0].value.get_weights()[0].shape[0],2)), "`DATA_WIDTH"],
+                               inputWires)
 inputWires = ModelHandler.createVerilogForGivenLayer(inputLayers[0].value, verilogPrinter, 
                                                      quantizer, inputWires)
 ModelHandler.createVerilogForAllLayers(inputLayers[0], verilogPrinter, quantizer, inputWires)

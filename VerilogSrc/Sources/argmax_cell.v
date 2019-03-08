@@ -28,12 +28,12 @@ module argmax_cell#(
     ) (
         input wire clk,
         input wire [INDEX_WIDTH-1:0] input_index,
-        input wire [DATA_WIDTH-1:0] input_value,
+        input wire signed [DATA_WIDTH-1:0] input_value,
         input wire input_enable,
         output reg [RESULT_WIDTH:0] output_result
     );
 
-reg [DATA_WIDTH-1:0] best_value;
+reg signed [DATA_WIDTH-1:0] best_value;
 reg [DATA_WIDTH-1:0] best_index;
 
 initial begin
