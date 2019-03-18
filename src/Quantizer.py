@@ -2,6 +2,8 @@ import tensorflow as tf
 from tensorflow import keras
 import numpy as np
 
+from DenseWithoutActivation import DenseWithoutActivation
+
 # Class to take the input model and some data to find all of the data necessary 
 # to quantize the model into the desired bitlength.
 
@@ -35,18 +37,41 @@ class Quantizer:
         
     # Function to find all of the data required to quantize the model.    
     def initialiseQuantizationData(self, keras_model, test_data, scale_width):
-        self.findLayerInputAndOutputRanges(keras_model, test_data)
+        observation_model = self.createDenseObservationModelWithoutActivation(keras_model)
+    
+        self.findLayerInputAndOutputRanges(observation_model, test_data)
         self.findLayerInputAndOutputScales()    
         
-        self.findLayerWeightRanges(keras_model)
+        self.findLayerWeightRanges(observation_model)
         self.findLayerWeightScales()
             
-        self.findFinalScalingConstant(keras_model, scale_width)
+        self.findFinalScalingConstant(observation_model, scale_width)
      
     # Function to fill a dictionary of the input model layers with their corresponding index.
     def giveLayersIdsAssumingSequentialModel(self, keras_model):
         for layer_index in range(len(keras_model.layers)):
             self.layer_ids[keras_model.layers[layer_index]] = layer_index
+            
+    # Function which assumes that the given model consists of Dense keras layers 
+    # and that the final layer has softmax activation function. Given these assumtions this function returns
+    # another model where the final softmax activation function is removed. 
+    # This should be reworked so that the assumtions weren't needed.
+    def createDenseObservationModelWithoutActivation(self, keras_model):
+        layers=[]
+        for layer_id in range(len(keras_model.layers)-1):
+            layers.append(keras.layers.Dense.from_config(keras_model.layers[layer_id].get_config()))
+
+        last_layer = keras_model.layers[len(keras_model.layers)-1]
+        last_layer.activation = keras.activations.linear
+        layers.append(DenseWithoutActivation.from_config(last_layer.get_config()))
+
+        obs_model = keras.Sequential(layers)
+                          
+        for layer_index in range(len(keras_model.layers)):
+            weights = keras_model.layers[layer_index].get_weights()
+            obs_model.layers[layer_index].set_weights(weights)
+
+        return obs_model
             
     # Function to change the model weights to the quantized ones.        
     def quantizeModelWeights(self):
