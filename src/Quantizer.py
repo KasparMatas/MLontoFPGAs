@@ -61,9 +61,9 @@ class Quantizer:
         for layer_id in range(len(keras_model.layers)-1):
             layers.append(keras.layers.Dense.from_config(keras_model.layers[layer_id].get_config()))
 
-        last_layer = keras_model.layers[len(keras_model.layers)-1]
-        last_layer.activation = keras.activations.linear
-        layers.append(DenseWithoutActivation.from_config(last_layer.get_config()))
+        last_layer_config = keras_model.layers[len(keras_model.layers)-1].get_config()
+        last_layer_config["activation"] = "linear"
+        layers.append(DenseWithoutActivation.from_config(last_layer_config))
 
         obs_model = keras.Sequential(layers)
                           
