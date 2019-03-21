@@ -1,22 +1,7 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
-// Create Date: 21.11.2018 15:32:28
-// Design Name: 
-// Module Name: argmax_cell
-// Project Name: 
-// Target Devices: 
-// Tool Versions: 
-// Description: 
-// 
-// Dependencies: 
-// 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
-// 
+// Final cell which checks the values of each classification option 
+// and outputs the result,
 //////////////////////////////////////////////////////////////////////////////////
 
 
@@ -28,12 +13,12 @@ module argmax_cell#(
     ) (
         input wire clk,
         input wire [INDEX_WIDTH-1:0] input_index,
-        input wire signed [DATA_WIDTH-1:0] input_value,
+        input wire [DATA_WIDTH-1:0] input_value,
         input wire input_enable,
         output reg [RESULT_WIDTH:0] output_result
     );
 
-reg signed [DATA_WIDTH-1:0] best_value;
+reg [DATA_WIDTH-1:0] best_value;
 reg [DATA_WIDTH-1:0] best_index;
 
 initial begin

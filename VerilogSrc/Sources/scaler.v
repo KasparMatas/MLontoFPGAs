@@ -1,22 +1,6 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
-// Create Date: 25.02.2019 15:26:35
-// Design Name: 
-// Module Name: scaler
-// Project Name: 
-// Target Devices: 
-// Tool Versions: 
-// Description: 
-// 
-// Dependencies: 
-// 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
-// 
+// Scaler cell to scale the results back into the desired data width.
 //////////////////////////////////////////////////////////////////////////////////
 
 

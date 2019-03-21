@@ -25,7 +25,7 @@ class ModelHandler:
         scalerPrinter = DenseScalerPrinter()
         inputWires.insert(2,"ground")
         weights = np.transpose(layer.get_weights()[0])
-        wireWidths = [math.ceil(math.log(weights.shape[1],2)), "`DATA_WIDTH", "`DATA_WIDTH*4"]
+        wireWidths = [math.ceil(math.log(weights.shape[1],2)), "`DATA_WIDTH", "`DATA_WIDTH*5"]
         
         outputWires = weightCellPrinter.printCells(weights, quantizer.layer_ids[layer], quantizer, 
                                                    weights.shape[0], wireWidths, inputWires, outputFile)

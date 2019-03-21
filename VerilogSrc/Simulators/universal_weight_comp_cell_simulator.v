@@ -3,23 +3,7 @@
 `define DATA_WIDTH 8
 `define CLOCK 20 
 //////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
-// Create Date: 06.12.2018 15:12:05
-// Design Name: 
-// Module Name: universal_weigh_comp_cell_simulator
-// Project Name: 
-// Target Devices: 
-// Tool Versions: 
-// Description: 
-// 
-// Dependencies: 
-// 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
-// 
+// Unit test for universal_weight_comp_cell_simulator.
 //////////////////////////////////////////////////////////////////////////////////
 
 

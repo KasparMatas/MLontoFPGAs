@@ -3,23 +3,7 @@
 `define DATA_WIDTH 32
 `define CLOCK 20 
 //////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
-// Create Date: 20.11.2018 17:51:34
-// Design Name: 
-// Module Name: relu_cell_simulator
-// Project Name: 
-// Target Devices: 
-// Tool Versions: 
-// Description: 
-// 
-// Dependencies: 
-// 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
-// 
+// Unit test for the relu_cell.
 //////////////////////////////////////////////////////////////////////////////////
 module relu_cell_simulator();
     

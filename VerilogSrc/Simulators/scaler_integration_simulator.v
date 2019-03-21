@@ -3,23 +3,7 @@
 `define DATA_WIDTH 8
 `define CLOCK 20 
 //////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
-// Create Date: 26.02.2019 10:41:17
-// Design Name: 
-// Module Name: scaler_integration_simulator
-// Project Name: 
-// Target Devices: 
-// Tool Versions: 
-// Description: 
-// 
-// Dependencies: 
-// 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
-// 
+// Simulation module for building a model using the scaler.
 //////////////////////////////////////////////////////////////////////////////////
 module scaler_integration_simulator();
     event error;

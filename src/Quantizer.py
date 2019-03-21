@@ -90,6 +90,7 @@ class Quantizer:
 
     # Function to get the scale and shift amount given a scale multiplier of all 
     # of the scales used in the current layer
+    # This logic is taken from https://github.com/google/gemmlowp/blob/master/doc/quantization_example.cc
     def getFinalScale(self, real_multiplier, scaler_width):
         if(real_multiplier > 1 or real_multiplier < 0):
             raise ValueError("Scale is outside of the required range: ", real_multiplier)
