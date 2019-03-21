@@ -1,24 +1,9 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
-// Create Date: 17.11.2018 18:03:33
-// Design Name: 
-// Module Name: weight_comp_cell
-// Project Name: 
-// Target Devices: 
-// Tool Versions: 
-// Description: 
-// 
-// Dependencies: 
-// 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
-// 
+// Base cell from which the systolic array consists of. 
+// Takes the input and multiplies with the weight and adds the results together. 
+// Finally it passes the results forward.
 //////////////////////////////////////////////////////////////////////////////////
-// NEEDS TO HAVE 0 ENABLE AT THE BEGINNING
 
 module weight_comp_cell #(
         parameter DATA_WIDTH = 8,
@@ -43,14 +28,8 @@ module weight_comp_cell #(
 reg signed [RESULT_WIDTH-1:0] accumulator;
 reg [RESULT_WIDTH:0] result;
 wire signed [RESULT_WIDTH-1:0] next_add;
-wire signed [RESULT_WIDTH-1:0] next_input;
-wire signed [RESULT_WIDTH-1:0] next_rweight;
-wire signed [RESULT_WIDTH-1:0] next_qweight;
 
 assign next_add = (input_value - INPUT_OFFSET) * (WEIGHTS[8*input_index +: 8] - WEIGHT_OFFSET);
-assign next_input = (input_value - INPUT_OFFSET);
-assign next_rweight = (WEIGHTS[8*input_index +: 8] - WEIGHT_OFFSET);
-assign next_qweight = WEIGHTS[8*input_index +: 8];
 
 initial begin 
     result = 0; 

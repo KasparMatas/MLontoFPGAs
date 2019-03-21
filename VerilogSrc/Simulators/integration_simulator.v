@@ -8,23 +8,9 @@
 `define WEIGHT_AMOUNT_4 2
 `define WEIGHT_AMOUNT_5 8
 //////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
-// Create Date: 20.11.2018 14:37:56
-// Design Name: 
-// Module Name: integration_simulator
-// Project Name: 
-// Target Devices: 
-// Tool Versions: 
-// Description: 
-// 
-// Dependencies: 
-// 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
-// 
+// Outdated integration simulation module using the universal and relu cells 
+// without scalers. Needs to get updated once relu and universal cells get updated 
+// for quantized models.
 //////////////////////////////////////////////////////////////////////////////////
 module integration_simulator();
     event error;

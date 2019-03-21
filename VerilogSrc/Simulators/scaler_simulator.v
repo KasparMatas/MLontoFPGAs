@@ -3,23 +3,7 @@
 `define DATA_WIDTH 16
 `define CLOCK 20 
 //////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
-// Create Date: 25.02.2019 15:49:13
-// Design Name: 
-// Module Name: scaler_simulator
-// Project Name: 
-// Target Devices: 
-// Tool Versions: 
-// Description: 
-// 
-// Dependencies: 
-// 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
-// 
+// Unit test for the scaler module
 //////////////////////////////////////////////////////////////////////////////////
 module scaler_simulator();
     

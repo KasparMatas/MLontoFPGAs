@@ -3,23 +3,7 @@
 `define DATA_WIDTH 16
 `define CLOCK 20 
 //////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
-// Create Date: 19.11.2018 14:41:26
-// Design Name: 
-// Module Name: weight_comp_cell_simulator
-// Project Name: 
-// Target Devices: 
-// Tool Versions: 
-// Description: 
-// 
-// Dependencies: 
-// 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
-// 
+// Unit test for weight_comp_cell.
 //////////////////////////////////////////////////////////////////////////////////
 module weight_comp_cell_simulator();
 

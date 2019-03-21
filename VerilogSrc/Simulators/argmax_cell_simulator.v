@@ -3,23 +3,7 @@
 `define DATA_WIDTH 8
 `define CLOCK 20 
 //////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
-// Create Date: 21.11.2018 15:57:30
-// Design Name: 
-// Module Name: argmax_simulator
-// Project Name: 
-// Target Devices: 
-// Tool Versions: 
-// Description: 
-// 
-// Dependencies: 
-// 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
-// 
+// Unit test for the argmax_cell module.
 //////////////////////////////////////////////////////////////////////////////////
 module argmax_simulator();
 

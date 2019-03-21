@@ -2,23 +2,7 @@
 
 `define DATA_WIDTH 8
 //////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
-// Create Date: 30.01.2019 11:48:04
-// Design Name: 
-// Module Name: multiply_and_add_simulator
-// Project Name: 
-// Target Devices: 
-// Tool Versions: 
-// Description: 
-// 
-// Dependencies: 
-// 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
-// 
+// Unit test for the multiply_and_add module.
 //////////////////////////////////////////////////////////////////////////////////
 
 
