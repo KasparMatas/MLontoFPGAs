@@ -39,13 +39,23 @@ class TopologyFinder:
     # Method which checks that the given model has a supported topology.
     def assertSuitableTopology(arrayOfInputLayers):
         if(len(arrayOfInputLayers)!=1):
-            raise Exception("Please submit a model which only has one input")
+            raise Exception("Please submit a model which only has one input.")
         else:
             TopologyFinder.assertOneOutputAndInput(arrayOfInputLayers[0])
+            TopologyFinder.assertDecreasingAmountOfUnits(arrayOfInputLayers[0])
             
     # Method which checks that there are no layers with multiple inputs or outputs.
     def assertOneOutputAndInput(childNode):
         if len(childNode.parents) > 1:
-            raise Exception("Please submit a sequential model")
+            raise Exception("Please submit a sequential model.")
         elif len(childNode.parents) == 1:
             TopologyFinder.assertOneOutputAndInput(childNode.parents[0])
+            
+    def assertDecreasingAmountOfUnits(childNode):
+        if len(childNode.parents) == 1:
+            if (childNode.value.get_config()["units"] 
+                < childNode.parents[0].value.get_config()["units"]):
+                raise Exception("Please submit a model with decreasing amount of units in layers.")
+            else:
+              TopologyFinder.assertDecreasingAmountOfUnits(childNode.parents[0])
+
